@@ -11,9 +11,13 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import sys
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # 主应用
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent  # 项目的主应用目录
 
+# 新增一个系统导包路径，引入子应用
+sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -24,7 +28,7 @@ SECRET_KEY = '(j%k$udj)5803#j8-ew3qsyb=y@y7g#x@58vu!(t_&r&s3_^h2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["api.luffycity.cn"]
 
 
 # Application definition
@@ -36,9 +40,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'xadmin',
+    'crispy_forms',
+    'reversion',
+    'rest_framework',
+    'home',
+
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -153,13 +165,18 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'luffyapi.utils.exceptions.custom_exception_handler',
 }
 
+# CORS组的配置信息
+CORS_ORIGIN_WHITELIST = (
+    'http://www.luffycity.cn:8080',
+)
+CORS_ALLOW_CREDENTIALS = True  # 不允许ajax跨域请求时携带cookie
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-Hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -172,3 +189,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static")
+]
+
+# 项目中存储上传文件的根目录【暂时设置】，upload目录需要手动配置
+MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
+# 访问上传文件的url地址前缀
+MEDIA_URL = "/media/"
+
+
+
+
