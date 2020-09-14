@@ -1,6 +1,6 @@
 import xadmin
 from xadmin import views
-from .models import Banner
+from .models import Banner, Nav
 
 
 class BaseSetting(object):
@@ -17,11 +17,16 @@ class GlobalSettings(object):
 
 
 class BannerModelAdmin(object):
-    list_display=["name","orders","is_show"]
+    list_display=["name", "orders", "is_show"]
+
+
+# 导航
+class NavModelAdmin(object):
+    list_display=["name", "link", "is_show"]
 
 
 xadmin.site.register(views.BaseAdminView, BaseSetting)
 xadmin.site.register(views.CommAdminView, GlobalSettings)
 xadmin.site.register(Banner, BannerModelAdmin)
-
+xadmin.site.register(Nav, NavModelAdmin)
 

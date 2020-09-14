@@ -1,20 +1,32 @@
 <template>
-  <el-carousel height="405px" :interval="3000" arrow="always">
-    <el-carousel-item>
-      <img src="/static/image/alex.jpeg" alt="">
-    </el-carousel-item>
-    <el-carousel-item>
-      <img src="/static/image/banner1.png" alt="">
-    </el-carousel-item>
-    <el-carousel-item>
-      <img src="/static/image/banner1.png" alt="">
+  <el-carousel height="405px" :interval="3000" arrow="always"><!--    <el-carousel-item>-->
+    <el-carousel-item :key="index" v-for="(banner, index) in banner_list">
+      <a :href="banner.link"><img :src="banner.image" alt=""></a>
     </el-carousel-item>
   </el-carousel>
 </template>
 
 <script>
     export default {
-        name: "Banner"
+        name: "Banner",
+        created() {
+            this.get_banner();
+        },
+        data(){
+            return {
+                banner_list:[],
+            }
+        },
+        methods:{
+            get_banner(){
+                this.$axios.get(`/banner/`).then((response)=>{
+                    console.log('1:', response.data);
+                    this.banner_list = response.data;
+                }).catch(error=>{
+                    this.$message.error("网络异常，轮播图无法显示！")
+                })
+            }
+        }
     }
 </script>
 

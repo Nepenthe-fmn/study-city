@@ -15,6 +15,7 @@ Vue.prototype.$settings = settings;
 
 /* 允许ajax发送请求时附带cookie，设置为不允许 */
 axios.defaults.withCredentials = false;
+axios.defaults.baseURL = settings.Host;
 Vue.prototype.$axios = axios;  // 把对象挂载vue中
 
 Vue.use(ElementUI);
