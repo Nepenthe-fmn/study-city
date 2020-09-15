@@ -1,5 +1,5 @@
 <template>
-  <el-carousel height="405px" :interval="3000" arrow="always"><!--    <el-carousel-item>-->
+  <el-carousel height="480px" :interval="3000" arrow="always"><!--    <el-carousel-item>-->
     <el-carousel-item :key="index" v-for="(banner, index) in banner_list">
       <a :href="banner.link"><img :src="banner.image" alt=""></a>
     </el-carousel-item>
