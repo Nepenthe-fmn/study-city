@@ -1,9 +1,9 @@
 <template>
   <div class="login box">
-		<img src="/static/image/course_demo.png" alt="">
+		<img src="/static/image/Loginbg.3377d0c.jpg" alt="">
 		<div class="login">
 			<div class="login-title">
-				<img src="/static/image/course_demo.png" alt="">
+				<img src="/static/image/logo.svg" alt="">
 				<p>帮助有志向的年轻人通过努力学习获得体面的工作和生活!</p>
 			</div>
 			<div class="login_box">

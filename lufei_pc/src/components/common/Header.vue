@@ -49,9 +49,9 @@
 </script>
 
 <style scoped>
-  /*.header-box{*/
-  /*  height: 80px;*/
-  /*}*/
+  .header-box{
+    height: 80px;
+  }
 .header{
   width: 100%;
   height: 80px;
@@ -73,7 +73,7 @@
   height: 80px;
   line-height: 80px;
   margin-right: 50px;
-  cursor: pointer; /* 设置光标的形状为爪子 */
+  cursor: pointer;  /* 设置光标的形状为爪子 */
 }
 .header .content .logo img{
   vertical-align: middle;
