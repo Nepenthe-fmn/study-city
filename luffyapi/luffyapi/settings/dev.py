@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import sys
+import datetime
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent  # 项目的主应用目录
@@ -46,8 +47,11 @@ INSTALLED_APPS = [
     'reversion',
     'rest_framework',
     'home',
-
+    'users',
 ]
+
+# 配置文件中注册users应用
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -59,6 +63,19 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# JWT配置
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+}
 
 ROOT_URLCONF = 'luffyapi.urls'
 
@@ -198,6 +215,7 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 # 访问上传文件的url地址前缀
 MEDIA_URL = "/media/"
+
 
 
 
