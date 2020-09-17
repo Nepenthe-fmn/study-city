@@ -71,10 +71,13 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+    # 异常处理
+    'EXCEPTION_HANDLER': 'luffyapi.utils.exceptions.custom_exception_handler',
 }
 
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.utils.jwt_response_payload_handler',
 }
 
 ROOT_URLCONF = 'luffyapi.urls'
@@ -177,10 +180,8 @@ LOGGING = {
     }
 }
 
-REST_FRAMEWORK = {
-    # 异常处理
-    'EXCEPTION_HANDLER': 'luffyapi.utils.exceptions.custom_exception_handler',
-}
+# 引入自定义认证类
+AUTHENTICATION_BACKENDS = ['users.utils.AuthModelBackend',]
 
 # CORS组的配置信息
 CORS_ORIGIN_WHITELIST = (
