@@ -5,6 +5,7 @@ import App from './App';
 import router from './router';
 import settings from './settings';
 import ElementUI from 'element-ui';
+import '../static/js/TCaptcha';
 
 import 'element-ui/lib/theme-chalk/index.css';
 import "../static/css/reset.css";

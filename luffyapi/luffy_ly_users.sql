@@ -1,0 +1,1 @@
+INSERT INTO luffy.ly_users (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined, mobile, avatar, birthday, money, name) VALUES (1, 'pbkdf2_sha256$150000$u9IqlJNQjKYi$YGb2gde+3jZAqOmNil06XcrspJXycbvqpn6fTVDkkZk=', null, 1, 'root', '', '', 'root@qq.com', 1, 1, '2020-09-16 11:53:12.964152', '', null, null, 0.00, null);

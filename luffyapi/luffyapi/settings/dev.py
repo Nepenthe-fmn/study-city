@@ -76,7 +76,7 @@ REST_FRAMEWORK = {
 }
 
 JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=3),
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.utils.jwt_response_payload_handler',
 }
 
@@ -216,6 +216,53 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 # 访问上传文件的url地址前缀
 MEDIA_URL = "/media/"
+
+# 腾讯防水墙配置
+TENCENT_CAPTCHA = {
+    "GATEWAY": "https://ssl.captcha.qq.com/ticket/verify",
+    "APPID": "2050295557",  # 此处的APPID一定要和客户端的APPID保持一致，否则后面票据会失败！
+    "App_Secret_Key": "0xX9nA34W-MSsAy_Z1zmRTA**",
+}
+
+# Redis缓存数据库配置
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        # 项目上线需要调整路径
+        "LOCATION": "redis://127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "session": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        # 项目上线需要调整路径
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "sms_code": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        # 项目上线需要调整路径
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# 阿里云参数
+ACCESSKEY_ID = "LTAI4GAo2L2wEXX7HqgLJTNz"
+ACCESSKEY_SERECT = "Xi6k8iIEeEG0Ag8jjxLKHHBxSv0Eyz"
+REGION_ID = "cn-beijing"
+SIGN_NAME = "bzboy"  # 签名
+ROLE_ARN = "acs:ram::1609891927356009:role/ramtracer"
+SMS_TEMPLATE_ID = {
+    'login': 'SMS_198692283',  # 登录使用的模板id
+    'register': 'SMS_198672376',  # 修注册使用的模板id
+}
+
 
 
 

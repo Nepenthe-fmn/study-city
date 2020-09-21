@@ -22,15 +22,15 @@
             </p>
             <p>忘记密码</p>
           </div>
-          <button class="login_btn" @click="loginHander">登录</button>
-          <p class="go_login">没有账号 <span>立即注册</span></p>
+          <button class="login_btn" @click="captcha">登录</button>
+          <p class="go_login">没有账号 <router-link to="/register"><span>立即注册</span></router-link></p>
         </div>
         <div class="inp" v-show="login_type==1">
           <input v-model="username" type="text" placeholder="手机号码" class="user">
           <input v-model="password" type="text" class="pwd" placeholder="短信验证码">
           <button id="get_code">获取验证码</button>
-          <button class="login_btn" @click="loginHander">登录</button>
-          <p class="go_login">没有账号 <span>立即注册</span></p>
+          <button class="login_btn">登录</button>
+          <p class="go_login">没有账号 <router-link to="/register"><span>立即注册</span></router-link></p>
         </div>
       </div>
     </div>
@@ -49,15 +49,28 @@
             }
         },
         methods: {
+            captcha(){
+                let captcha1 = new TencentCaptcha(this.$settings.TC_captcha.app_id, res=>{
+                  console.log("res.ret:", res.ret);
+                    if(res.ret == 0){
+                    this.loginHander(res.ticket,res.randstr);
+                }
+                });
+                captcha1.show();  // 显示验证码
+            },
+
             // 登陆处理
-            loginHander() {
+            loginHander(ticket, randstr) {
                 if (this.username.length < 1 || this.password.length < 1) {
                     this.$message.error("用户名或密码不能为空，请重新输入！");
                     return;
                 }
                 // ajax请求
                 this.$axios.post(`/users/login/`, {
-                    "username": this.username, "password": this.password
+                    "username": this.username,
+                    "password": this.password,
+                    "ticket": ticket,
+                    "randstr": randstr
                 }).then(response => {
                     if (this.remember) {
                         // 记住密码

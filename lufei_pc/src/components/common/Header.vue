@@ -11,15 +11,33 @@
                 <router-link :to="nav.link" v-else><span>{{nav.name}}</span></router-link>
               </li>
           </ul>
-          <div class="login-bar full-right">
+          <div v-if="token" class="login-bar full-right">
             <div class="shop-cart full-left">
               <img src="/static/image/cart.svg" alt="">
               <span><router-link to="/cart">购物车</router-link></span>
             </div>
-            <div class="login-box full-left">
-              <router-link to="/login">登录</router-link>
+            <div class="login-box login-box1 full-left">
+              <router-link to="" class="study-ceneter">学习中心</router-link>
+              <el-menu width="200" class="member el-menu-demo" mode="horizontal">
+                  <el-submenu index="2">
+                    <template slot="title"><router-link to=""><img :src="image" alt=""></router-link></template>
+                    <el-menu-item index="2-1">我的账户</el-menu-item>
+                    <el-menu-item index="2-2"><router-link to="/my/order">我的订单</router-link></el-menu-item>
+                    <el-menu-item index="2-3">我的优惠卷</el-menu-item>
+                    <el-menu-item index="2-3"><span @click="logoutHandle">退出登录</span></el-menu-item>
+                  </el-submenu>
+                </el-menu>
+            </div>
+          </div>
+          <div v-show="!token" class="login-bar full-right">
+            <div class="shop-cart full-left">
+              <img src="/static/image/cart.svg" alt="">
+              <span><router-link to="/cart">购物车</router-link></span>
+            </div>
+            <div class="login-box login-box2 full-left">
+              <router-link to="/login"><span>登录</span></router-link>
               &nbsp;|&nbsp;
-              <span>注册</span>
+              <span class="header-register"><router-link to="/register">注册</router-link></span>
             </div>
           </div>
         </div>
@@ -32,10 +50,13 @@
       name: "Header",
       data(){
         return{
+          token: true,
           nav_list:[],
+          image:this.$settings.Host+localStorage.getItem("user_avatar"),
         }
       },
       created(){
+          this.token = this.$settings.checkoutUserLogin(this);
           this.get_nav();
       },
       methods:{
@@ -43,15 +64,22 @@
               this.$axios.get(`/nav/header/`).then(response=>{
                   this.nav_list = response.data;
               })
+          },
+          logoutHandle(){
+              // 退出登录处理
+              localStorage.removeItem("token");
+              sessionStorage.removeItem("token");
+              this.token = "";
           }
+
       }
     }
 </script>
 
 <style scoped>
-  .header-box{
-    height: 80px;
-  }
+.header-box{
+  height: 80px;
+}
 .header{
   width: 100%;
   height: 80px;
@@ -73,7 +101,7 @@
   height: 80px;
   line-height: 80px;
   margin-right: 50px;
-  cursor: pointer;  /* 设置光标的形状为爪子 */
+  cursor: pointer; /* 设置光标的形状为爪子 */
 }
 .header .content .logo img{
   vertical-align: middle;
@@ -128,8 +156,11 @@
 .header .login-bar .shop-cart span{
   margin-right: 6px;
 }
-.header .login-bar .login-box{
-  margin-top: 33px;
+.header .login-bar .login-box1{
+  margin-top: 25px;
+}
+.header .login-bar .login-box2{
+  margin-top: 32px;
 }
 .header .login-bar .login-box span{
   color: #4a4a4a;
@@ -137,5 +168,28 @@
 }
 .header .login-bar .login-box span:hover{
   color: #000000;
+}
+.member{
+    display: inline-block;
+    height: 34px;
+    margin-left: 20px;
+}
+.member img{
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.member img:hover{
+  border: 1px solid yellow;
+}
+.el-menu.el-menu--horizontal{
+  border-bottom: none;
+}
+.study-ceneter{
+  display: inline-block;
+  height: 34px;
+  line-height: 34px;
+  vertical-align: text-bottom;
 }
 </style>
