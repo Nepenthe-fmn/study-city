@@ -1,13 +1,17 @@
+import re
+import random
+from datetime import datetime
 from rest_framework_jwt.serializers import JSONWebTokenSerializer
 from rest_framework import serializers
 from rest_framework_jwt.compat import get_username_field, PasswordField
 from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import ugettext as _
 from rest_framework_jwt.compat import get_username_field, PasswordField
+from rest_framework_jwt.settings import api_settings
+from django_redis import get_redis_connection
 
 
 User = get_user_model()
-from rest_framework_jwt.settings import api_settings
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
@@ -56,3 +60,81 @@ class CurtomJSONWebTokenSerializer(JSONWebTokenSerializer):
             msg = _('Must include "{username_field}" and "password".')
             msg = msg.format(username_field=self.username_field)
             raise serializers.ValidationError(msg)
+
+
+class UserModelSerializer(serializers.ModelSerializer):
+    password2 = serializers.CharField(
+        required=True, write_only=True, max_length=16,
+        min_length=6, help_text="确认密码", label="确认密码")
+    sms_code = serializers.CharField(
+        required=True, write_only=True, max_length=6,
+        min_length=6, help_text="短信验证码", label="短信验证码")
+    token = serializers.CharField(
+        read_only=True, label="jwt", help_text="jwt")
+
+    class Meta:
+        model = User
+        fields = ["id", "mobile", "password", "name", "avatar", "password2", "sms_code", "token"]
+        extra_kwargs = {
+            "mobile": {"write_only": True},
+            "password": {"write_only": True},
+            "name": {"read_only": True},
+            "avatar": {"read_only": True},
+        }
+
+    def validate(self, attrs):
+        """ 对接受的数据进行验证 """
+        password = attrs.get("password")
+        password2 = attrs.get("password2")
+        sms_code = attrs.get("sms_code")
+        mobile = attrs.get("mobile")
+        # 验证密码
+        if password != password2:
+            raise serializers.ValidationError("两次密码不一致！请重新输入...")
+        if not re.match(r"(\+86)?0?1[3-9]\d{9}", mobile):
+            raise serializers.ValidationError("手机号格式错误！请重新输入...")
+        try:
+            User.objects.get(mobile=mobile)
+            raise serializers.ValidationError("当前手机已注册！")
+        except User.DoesNotExist:
+            pass
+
+        redis = get_redis_connection("sms_code")
+        redis_sms_code_bytes = redis.get("sms_%s" % mobile)
+        if redis_sms_code_bytes is None:
+            raise serializers.ValidationError("短信验证已过期！请重新获取...")
+        redis_sms_code = redis_sms_code_bytes.decode()
+        if redis_sms_code != sms_code:
+            raise serializers.ValidationError("验证码错误！")
+        redis.delete("sms_%s" % mobile)
+        return attrs
+
+    def create(self, validated_data):
+        # validated_data.pop("password2")
+        # validated_data.pop("sms_code")
+        try:
+            # 生成随机账号
+            username = "ly_" + hex(int(str(datetime.now().timestamp())[1:10] + '%04d' % random.randint(1, 9999)))[2:]
+            user = User.objects.create_user(
+                username=username,
+                name=username,
+                password=validated_data.get("password"),
+                mobile=validated_data.get("mobile"),
+            )
+
+            # 手动生成jwt登录状态
+            jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+            jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+            payload = jwt_payload_handler(user)
+            user.token = jwt_encode_handler(payload)
+
+            return user
+        except:
+            raise serializers.ValidationError("用户注册失败！")
+
+
+
+
+
+
+

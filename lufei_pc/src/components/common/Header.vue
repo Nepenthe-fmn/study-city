@@ -20,7 +20,7 @@
               <router-link to="" class="study-ceneter">学习中心</router-link>
               <el-menu width="200" class="member el-menu-demo" mode="horizontal">
                   <el-submenu index="2">
-                    <template slot="title"><router-link to=""><img :src="image" alt=""></router-link></template>
+                    <template slot="title"><router-link to=""><img src="/static/image/member.png" alt=""></router-link></template>
                     <el-menu-item index="2-1">我的账户</el-menu-item>
                     <el-menu-item index="2-2"><router-link to="/my/order">我的订单</router-link></el-menu-item>
                     <el-menu-item index="2-3">我的优惠卷</el-menu-item>

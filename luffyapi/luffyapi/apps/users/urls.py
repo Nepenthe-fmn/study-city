@@ -7,7 +7,7 @@ urlpatterns = [
     path('login/', views.ObtainAPIView.as_view()),
     path('verify/', verify_jwt_token),
     re_path('sms/(?P<mobile>1[3-9]\\d{9})/', views.SendSMSAPIView.as_view()),
-    # re_path('users/', views.UserAPIView.as_view()),
+    path('', views.UserAPIView.as_view()),
 ]
 
 

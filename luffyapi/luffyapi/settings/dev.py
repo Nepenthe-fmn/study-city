@@ -73,6 +73,9 @@ REST_FRAMEWORK = {
     ),
     # 异常处理
     'EXCEPTION_HANDLER': 'luffyapi.utils.exceptions.custom_exception_handler',
+    'DEFAULT_THROTTLE_RATES': {
+        'send_power': '20/day'
+    }
 }
 
 JWT_AUTH = {
@@ -262,7 +265,6 @@ SMS_TEMPLATE_ID = {
     'login': 'SMS_198692283',  # 登录使用的模板id
     'register': 'SMS_198672376',  # 修注册使用的模板id
 }
-
 
 
 
