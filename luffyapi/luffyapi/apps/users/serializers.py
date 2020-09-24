@@ -40,7 +40,7 @@ class CurtomJSONWebTokenSerializer(JSONWebTokenSerializer):
         }
 
         if all(credentials.values()):
-            user = authenticate(self.context["request"],**credentials)
+            user = authenticate(self.context["request"], **credentials)
 
             if user:
                 if not user.is_active:

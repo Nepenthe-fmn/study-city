@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'home',
     'users',
+    'courses',
 ]
 
 # 配置文件中注册users应用

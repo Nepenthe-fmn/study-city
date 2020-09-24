@@ -10,6 +10,7 @@ class Banner(BaseModel):
     image = models.ImageField(upload_to='banner', null=True,blank=True, verbose_name='轮播图')
     note = models.CharField(max_length=150, verbose_name='备注信息')
     link = models.CharField(max_length=150, verbose_name='轮播图广告地址')
+
     class Meta:
         db_table = 'ly_banner'
         verbose_name = '轮播图'
