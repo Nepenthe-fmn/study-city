@@ -29,7 +29,7 @@
               <button class="buy-now">立即购买</button>
               <button class="free">免费试学</button>
             </div>
-            <div class="add-cart" @click="carHandler"><img src="/static/image/cart-yellow.svg" alt="" >加入购物车</div>
+            <div class="add-cart" @click="carHandler"><img src="/static/image/cart-yellow.svg" alt="">加入购物车</div>
           </div>
         </div>
       </div>
@@ -56,8 +56,9 @@
               <p class="chapter-title"><img src="/static/image/1.svg" alt="">第{{chapter.number}}章·{{chapter.name}}</p>
               <ul class="lesson-list">
                 <li class="lesson-item" v-for="lesson in chapter.lesson_list">
-                  <p class="name"><span class="index">{{chapter.number}}-{{lesson.number}}</span> {{lesson.name}}<span class="free" v-if="lesson.free_trail">免费</span></p>
-                  <p class="time">07:30 <img src="/static/image/chapter-player.svg"></p>
+                  <p class="name"><span class="index">{{chapter.number}}-{{lesson.number}}</span> {{lesson.name}}<span
+                    class="free" v-if="lesson.free_trail">免费</span></p>
+                  <p class="time">07:30 <img src="/static/image/play-icon-gray.svg"></p>
                   <button class="try" v-if="lesson.free_trail">立即试学</button>
                   <button class="try" v-else>立即购买</button>
                 </li>
@@ -129,7 +130,7 @@
                 }
             }
         },
-        created(){
+        created() {
             this.course.id = this.$route.params.id;
             this.get_course();
             this.get_chapters();
@@ -142,47 +143,59 @@
             onPlayerPause() {
                 // alert("暂停广告");
             },
-            get_course(){
+            get_course() {
                 // 获取课程信息
-                this.$axios.get(`/courses/${this.course.id}/`).then(response=>{
+                this.$axios.get(`/courses/${this.course.id}/`).then(response => {
                     this.course = response.data;
                     this.playerOptions.poster = response.data.course_img;
                     this.playerOptions.sources[0].src = response.data.course_video;
-                }).catch(error=>{
+                }).catch(error => {
                     console.log(error.response.data);
                 })
             },
-            add_image_url(content){
-                while(content.search(`src="/media`)!==-1){
+            add_image_url(content) {
+                while (content.search(`src="/media`) !== -1) {
                     content = content.replace(/src="\/media/, `src="${this.$settings.Host}/media`)
                 }
                 return content
             },
-            get_chapters(){
+            get_chapters() {
                 // 获取章节列表
                 this.$axios.get(`/courses/chapters/`, {
-                    params:{
+                    params: {
                         course: this.course.id,
                     }
-                }).then(response=>{
+                }).then(response => {
                     this.chapters = response.data;
-                }).catch(error=>{
+                }).catch(error => {
                     console.log(error.response.data)
                 })
             },
-            carHandler(){
+            carHandler() {
                 // 添加商品到购物车
                 this.$settings.checkoutUserLogin(this);
-                if(this.token){
+                if (this.token) {
                     this.$axios.post(`/cart/course/`, {
                         course_id: this.course.id,
-                    },{
+                    }, {
                         headers: {
                             Authorization: "jwt " + this.token,
                         }
-                    }).then(response=>{
+                    }).then(response => {
                         this.$message.success(response.data.message);
-                    }).catch(error=>{
+                        // 跳转页面
+                        this.$confirm('购物车添加成功!是否跳转到购物车?', '网站提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '继续浏览',
+                            type: 'success'
+                        }).then(() => {
+                            // 跳转到购物车
+                            this.$router.push("/cart");
+                        }).catch(() => {
+                            // 跳转到课程目录
+                            this.$router.push("/course");
+                        });
+                    }).catch(error => {
                         console.log(error.response.data);
                     })
                 }

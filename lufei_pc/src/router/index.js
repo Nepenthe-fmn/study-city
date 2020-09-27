@@ -5,6 +5,7 @@ import Login from "../components/users/Login";
 import Register from "../components/users/Register";
 import Course from "../components/courses/Course";
 import Detail from "../components/courses/Detail";
+import Cart from "../components/cart/Cart";
 Vue.use(Router);
 
 export default new Router({
@@ -34,6 +35,10 @@ export default new Router({
       path: '/course/:id',  // 路径子路由（使用路由嵌套的前提是部分内容重叠）
       name: "Detail",
       component: Detail,
+    },{
+      path: '/cart',
+      name: "Cart",
+      component: Cart,
     }
   ]
 })

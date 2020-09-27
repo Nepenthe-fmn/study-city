@@ -69,6 +69,11 @@ class Course(BaseModel):
     def level_name(self):
         return self.get_level_display()
 
+    @property
+    def get_price(self):
+        price = "%.2f" % self.price
+        return price
+
 
 class Teacher(BaseModel):
     """讲师、导师表"""
