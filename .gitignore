@@ -115,7 +115,7 @@ dmypy.json
 .pyre/
 
 # 忽略uploads目录
-uploads/*
+lufftapi/luffyapi/uploads/*
 
 # 前端配置
 .DS_Store
