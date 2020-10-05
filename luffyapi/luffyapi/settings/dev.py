@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'courses',              # 课程应用
     'cart',                 # 购物车应用
     'orders',               # 订单应用
+    'coupon',               # 优惠券应用
 ]
 
 # 配置文件中注册users应用

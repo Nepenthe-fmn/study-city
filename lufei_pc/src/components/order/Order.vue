@@ -2,191 +2,329 @@
   <div class="cart">
     <Header/>
     <div class="cart-info" style="margin-top:-80px;">
-        <h3 class="cart-top">购物车结算 <span>共{{course_list.length}}门课程</span></h3>
-        <div class="cart-title">
-           <el-row>
-             <el-col :span="2">&nbsp;</el-col>
-             <el-col :span="10">课程</el-col>
-             <el-col :span="8">有效期</el-col>
-             <el-col :span="4">价格</el-col>
-           </el-row>
-        </div>
-        <div class="cart-item">
-          <el-row :key="key" v-for="(course,key) in course_list">
-             <el-col :span="2" class="checkbox">&nbsp;&nbsp;</el-col>
-             <el-col :span="10" class="course-info">
-               <router-link :to="`/course/${course.course_id}`"><img src="/static/image/course-cover.jpeg" alt=""></router-link>
+      <h3 class="cart-top">购物车结算 <span>共{{course_list.length}}门课程</span></h3>
+      <div class="cart-title">
+        <el-row>
+          <el-col :span="2">&nbsp;</el-col>
+          <el-col :span="10">课程</el-col>
+          <el-col :span="8">有效期</el-col>
+          <el-col :span="4">价格</el-col>
+        </el-row>
+      </div>
+      <div class="cart-item">
+        <el-row :key="key" v-for="(course,key) in course_list">
+          <el-col :span="2" class="checkbox">&nbsp;&nbsp;</el-col>
+          <el-col :span="10" class="course-info">
+            <router-link :to="`/course/${course.course_id}`"><img src="/static/image/course-cover.jpeg" alt="">
+            </router-link>
 
-               <span class="course-title">
+            <span class="course-title">
                  <router-link :to="`/course/${course.course_id}`">{{course.course_name}}</router-link>
-                 <br><span style="color: orange" v-if="course.price>course.discount_price">{{course.discount_name}}</span></span>
-             </el-col>
-             <el-col :span="8"><span>{{course.expire_text}}</span></el-col>
-             <el-col :span="4" class="course-price" v-if="course.price>course.discount_price">¥ {{course.discount_price}}<br><span>原价 ¥ {{course.price}}</span></el-col>
-             <el-col :span="4" class="course-price" v-else>¥ {{course.price}}</el-col>
-           </el-row>
-        </div>
-        <div class="discount">
-          <div id="accordion">
-            <div class="coupon-box">
-              <div class="icon-box">
-                <span class="select-coupon">使用优惠劵：</span>
-                <a class="select-icon" @click="use_coupon=!use_coupon"><img class="sign" :class="use_coupon?'is_show_select':''" src="../../../static/image/12.png" alt=""></a>
-                <span class="coupon-num">有3张可用</span>
-              </div>
-              <p class="sum-price-wrap">商品总金额：<span class="sum-price">{{orginal_total_price}}元</span></p>
+                 <br><span style="color: orange"
+                           v-if="course.price>course.discount_price">{{course.discount_name}}</span></span>
+          </el-col>
+          <el-col :span="8"><span>{{course.expire_text}}</span></el-col>
+          <el-col :span="4" class="course-price" v-if="course.price>course.discount_price">¥
+            {{course.discount_price}}<br><span>原价 ¥ {{course.price}}</span></el-col>
+          <el-col :span="4" class="course-price" v-else>¥ {{course.price}}</el-col>
+        </el-row>
+      </div>
+      <div class="discount">
+        <div id="accordion">
+          <div class="coupon-box">
+            <div class="icon-box">
+              <span class="select-coupon">使用优惠劵：</span>
+              <a class="select-icon" @click="use_coupon=!use_coupon"><img class="sign"
+                                                                          :class="use_coupon?'is_show_select':''"
+                                                                          src="../../../static/image/12.png" alt=""></a>
+              <span class="coupon-num">有3张可用</span>
             </div>
-            <div id="collapseOne" v-if="use_coupon">
-              <ul class="coupon-list" v-if="coupon_list.length>0">
-                <li class="coupon-item" :class="{disable:total_price<item.coupon.condition || check_duration(item.start_time,item.coupon.duration),active:coupon==item.id}" @click="select_coupon(item)" :key="key" v-for="(item,key) in coupon_list">
-                  <p class="coupon-name">{{item.coupon.name}}</p>
-                  <p class="coupon-condition" v-if="item.coupon.condition>0">满{{item.coupon.condition}}元可以使用</p>
-                  <p class="coupon-time start_time">开始时间：{{item.start_time.replace("T"," ")}}</p>
-                  <p class="coupon-time end_time">过期时间：{{get_end_time(item.start_time,item.coupon.duration)}}</p>
-                </li>
-              </ul>
-              <div class="no-coupon" v-else>
-                <span class="no-coupon-tips">暂无可用优惠券</span>
-              </div>
+            <p class="sum-price-wrap">商品总金额：<span class="sum-price">{{orginal_total_price}}元</span></p>
+          </div>
+          <div id="collapseOne" v-if="use_coupon">
+            <ul class="coupon-list" v-if="coupon_list.length>0">
+<!--              <li class="coupon-item"-->
+<!--                  :class="{disable:total_price<item.coupon.condition || check_duration(item.start_time,item.coupon.duration),active:coupon==item.id}"-->
+<!--                  @click="select_coupon(item)" :key="key" v-for="(item,key) in coupon_list">-->
+              <li class="coupon-item"
+                  :class="coupon_class(item, false)"
+                  @click="select_coupon(item, true)" :key="key" v-for="(item,key) in coupon_list">
+                <p class="coupon-name">{{item.coupon.name}}</p>
+                <p class="coupon-condition" v-if="item.coupon.condition>0">满{{item.coupon.condition}}元可以使用</p>
+                <p class="coupon-condition" v-else-if="item.coupon.coupon_type===2">《{{item.coupon.course_info.course_name}}》<br>课程专属</p>
+                <p class="coupon-condition" v-else>任意使用</p>
+<!--                <p class="coupon-time start_time">开始时间：{{item.start_time.replace("T"," ")}}</p>-->
+                <p class="coupon-time start_time">开始时间：{{format(item.start_timestamp)}}</p>
+<!--                <p class="coupon-time end_time">过期时间：{{get_end_time(item.start_time,item.coupon.duration)}}</p>-->
+                <p class="coupon-time end_time">过期时间：{{format(item.end_timestamp)}}</p>
+              </li>
+            </ul>
+            <div class="no-coupon" v-else>
+              <span class="no-coupon-tips">暂无可用优惠券</span>
             </div>
           </div>
-          <div class="credit-box" v-if="total_real_price>0">
-            <label class="my_el_check_box"><el-checkbox class="my_el_checkbox" v-model="use_credit"></el-checkbox></label>
-            <p class="discount-num1" v-if="!use_credit">使用我的贝里</p>
-            <p class="discount-num2" v-if="use_credit"><span>总积分：12000，已抵扣 ￥0，本次花费0积分</span></p>
-          </div>
-          <p class="sun-coupon-num">优惠券抵扣：<span>0.00元</span></p>
         </div>
-        <div class="calc">
-            <el-row class="pay-row">
-              <el-col :span="4" class="pay-col"><span class="pay-text">支付方式：</span></el-col>
-              <el-col :span="8">
-                <span class="alipay" @click="pay_type=1" v-if="pay_type!=1"><img src="../../../static/image/alipay.png" alt="支付宝"></span>
-                <span class="alipay" v-if="pay_type==1"><img src="../../../static/image/alipay2.png" alt="支付宝"></span>
-                <span class="alipay wechat" @click="pay_type=2" v-if="pay_type!=2"><img src="../../../static/image/wechat.png" alt="微信支付"></span>
-                <span class="alipay wechat" v-if="pay_type==2"><img src="../../../static/image/wechat2.png" alt="微信支付"></span>
-              </el-col>
-              <el-col :span="8" class="count">实付款： <span>¥{{total_real_price}}</span></el-col>
-              <el-col :span="4" class="cart-pay"><span @click="gotopay">立即支付</span></el-col>
-            </el-row>
+        <div class="credit-box" v-if="real_total_price>0">
+          <label class="my_el_check_box">
+            <el-checkbox class="my_el_checkbox" v-model="use_credit"></el-checkbox>
+          </label>
+          <p class="discount-num1" v-if="!use_credit">使用我的贝里</p>
+          <p class="discount-num2" v-if="use_credit"><span>总积分：12000，已抵扣 ￥0，本次花费0积分</span></p>
         </div>
+        <p class="sun-coupon-num">优惠券抵扣：<span>{{coupon_price.toFixed(2)}}元</span></p>
+      </div>
+      <div class="calc">
+        <el-row class="pay-row">
+          <el-col :span="4" class="pay-col"><span class="pay-text">支付方式：</span></el-col>
+          <el-col :span="8">
+            <span class="alipay" @click="pay_type=1" v-if="pay_type!=1"><img src="../../../static/image/alipay.png"
+                                                                             alt="支付宝"></span>
+            <span class="alipay" v-if="pay_type==1"><img src="../../../static/image/alipay2.png" alt="支付宝"></span>
+            <span class="alipay wechat" @click="pay_type=2" v-if="pay_type!=2"><img
+              src="../../../static/image/wechat.png" alt="微信支付"></span>
+            <span class="alipay wechat" v-if="pay_type==2"><img src="../../../static/image/wechat2.png"
+                                                                alt="微信支付"></span>
+          </el-col>
+          <el-col :span="8" class="count">实付款： <span>¥{{real_total_price.toFixed(2)}}</span></el-col>
+          <el-col :span="4" class="cart-pay"><span @click="gotopay">立即支付</span></el-col>
+        </el-row>
+      </div>
     </div>
     <Footer/>
   </div>
 </template>
 
 <script>
-  import Header from "../common/Header"
-  import Footer from "../common/Footer"
-  export default {
-    name:"Order",
-    data(){
-      return {
-        course_list: [],     // 勾选商品列表
-        total_price: 0,      // 课程总价
-        total_real_price: 0, // 实付总价
-        use_coupon: false, // 是否使用优惠券
-        use_credit: false, // 是否使用积分
-        coupon_list: [],    // 用户的优惠券列表
-        coupon: 0,   // 当前用户选择的优惠券ID
-        coupon_price: 0, // 优惠券抵扣价格
-        my_credit: 0, // 用户拥有的积分
-        current_credit: 0,       // 本次订单可以使用的积分
-        credit_rmb: 0, // 积分兑换比率
-        credit_price: 0,  // 积分折算价格
-        pay_type: 1,  // 支付方式
-      }
-    },
-    components:{
-      Header,
-      Footer,
-    },
-    created(){
-      this.get_course_list();
-    },
-    computed:{
-        orginal_total_price(){
-            // 计算总价格
-            let price = 0;
-            for(let course of this.course_list){
-                price += parseFloat(course.discount_price);
+    import Header from "../common/Header"
+    import Footer from "../common/Footer"
+
+    export default {
+        name: "Order",
+        data() {
+            return {
+                course_list: [],     // 勾选商品列表
+                total_price: 0,      // 课程总价
+                use_coupon: false, // 是否使用优惠券
+                use_credit: false, // 是否使用积分
+                coupon_list: [],    // 用户的优惠券列表
+                coupon: 0,   // 当前用户选择的优惠券ID
+                coupon_price: 0, // 优惠券抵扣价格
+                my_credit: 0, // 用户拥有的积分
+                current_credit: 0,       // 本次订单可以使用的积分
+                credit_rmb: 0, // 积分兑换比率
+                credit_price: 0,  // 积分折算价格
+                pay_type: 1,  // 支付方式
             }
-            return price;
+        },
+        components: {
+            Header,
+            Footer,
+        },
+        watch:{
+            use_coupon(){
+                if(!this.use_coupon){
+                    this.coupon = 0;
+                    this.coupon_price = 0;
+                }
+            }
+        },
+        created() {
+            this.token = this.$settings.checkoutUserLogin(this);
+            if(this.token){
+              this.get_course_list();
+              this.get_user_coupon();
+            }
+        },
+        computed: {
+            orginal_total_price() {
+                // 计算总价格
+                let price = 0;
+                for (let course of this.course_list) {
+                    price += parseFloat(course.discount_price);
+                }
+                this.total_price = price;
+                return price;
+            },
+            real_total_price(){
+                return this.total_price - this.coupon_price - this.credit_price;
+            }
+        },
+        methods: {
+            coupon_class(user_coupon, error_type){
+                if (this.check_coupon(user_coupon, error_type)) {
+                    if (this.coupon === user_coupon.id) {
+                        return "active";
+                    } else {
+                        return ""
+                    }
+                } else {
+                    return "disable";
+                }
+            },
+            select_coupon(user_coupon, error_type) {
+                if (this.check_coupon(user_coupon, error_type)) {
+                    this.coupon = user_coupon.id;
+                    let sale = parseFloat(user_coupon.coupon.sale.substr(1));
+                    if(user_coupon.coupon.coupon_type===1){
+                        // 减免
+                        this.coupon_price = sale;
+                    }else if(user_coupon.coupon.coupon_type===2){
+                        // 折扣
+                        let course_id = user_coupon.coupon.course_info.course_id;
+                        let course_info;
+                        for(let course of this.course_list){
+                            if(course.course_id===course_id){
+                                course_info = course;
+                                break;
+                            }
+                        }
+                        if (course_info.discount_price<course_info.prise){
+                            this.coupon_prise = 0;
+                        }else{
+                            this.coupon_price = course_info.price*(1-sale);
+                        }
+                    }
+                }
+
+            },
+            check_coupon(user_coupon, error_type) {
+                let can_use = false;
+                let error_message = "";
+                if (user_coupon.start_timestamp > user_coupon.now_timestamp) {
+                    error_message = "对不起,当前优惠券没有到启用时间!";
+                } else if (user_coupon.end_timestamp < user_coupon.now_timestamp) {
+                    error_message = "对不起,当前优惠券已过期!";
+                } else if (user_coupon.coupon.coupon_type === 1 && this.total_price < user_coupon.coupon.condition) {
+                    error_message = "对不起,本次订单金额无法使用当前优惠券!";
+                } else if (user_coupon.coupon.coupon_type === 2) {
+                    for (let course of this.course_list) {
+                        if (course.course_id === user_coupon.coupon.course_info.course_id) {
+                            can_use = true;
+                        }
+                    }
+
+                    if (can_use === false) {
+                        error_message = `对不起,本次订单只能在购买${user_coupon.coupon.course_info.course_name}!`;
+                    }
+                } else {
+                    can_use = true;
+                }
+
+                if (error_type && error_message) {
+                    this.$message.warning(error_message);
+                }
+
+                return can_use;
+            },
+
+            format(timestamp) {
+                let date = new Date(timestamp * 1000);
+                let Y = date.getFullYear();
+                let m = this.full_zero(date.getMonth() + 1);
+                let d = this.full_zero(date.getDate());
+                let H = this.full_zero(date.getHours());
+                let i = this.full_zero(date.getMinutes());
+                let s = this.full_zero(date.getSeconds());
+                return `${Y}-${m}-${d} ${H}:${i}:${s}`;
+            },
+            full_zero(num) {
+                return num < 10 ? '0' + num : num;
+            },
+            get_user_coupon() {
+                // 获取当前用户的所有优惠券
+                let user_id = sessionStorage.user_id || localStorage.user_id;
+                this.$axios.get(`/coupon/`, {
+                    params: {
+                        user_id: user_id,
+                        is_user: false,
+                    },
+                    headers: {
+                        Authorization: "jwt " + this.token,
+                    }
+                }).then(response => {
+                    this.coupon_list = response.data;
+                }).catch(error => {
+                    console.log(error.response.data);
+                });
+            },
+            get_course_list() {
+                // 获取购物车中勾选的商品列表，生成前端订单列表
+                this.$axios.get(`/cart/select/`, {
+                    headers: {
+                        Authorization: "jwt " + this.$settings.checkoutUserLogin(this)
+                    },
+                }).then(response => {
+                    this.course_list = response.data;
+                }).catch(error => {
+                    console.log(error.response.data)
+                })
+            },
+            gotopay() {
+                // 上传订单相关信息
+                this.$axios.post(`/orders/`, {
+                    pay_type: 1,
+                    credit: 0,
+                    coupon: 0,
+                }, {
+                    headers: {
+                        Authorization: "jwt " + this.$settings.checkoutUserLogin(this)
+                    },
+                }).then(response => {
+                    console.log(response.data);
+                }).catch(error => {
+                    console.log(error.response.data);
+                })
+            },
         }
-    },
-    methods: {
-        get_course_list(){
-            // 获取购物车中勾选的商品列表，生成前端订单列表
-            this.$axios.get(`/cart/select/`, {
-                headers:{
-                    Authorization: "jwt " + this.$settings.checkoutUserLogin(this)
-                },
-            }).then(response=>{
-                console.log(response.data);
-                this.course_list = response.data;
-            }).catch(error=>{
-                console.log(error.response.data)
-            })
-        },
-        gotopay(){
-           // 上传订单相关信息
-            this.$axios.post(`/orders/`, {
-                pay_type:1,
-                credit:0,
-                coupon:0,
-            }, {
-                headers:{
-                    Authorization: "jwt " + this.$settings.checkoutUserLogin(this)
-                },
-            }).then(response=>{
-                console.log(response.data);
-            }).catch(error=>{
-                console.log(error.response.data);
-            })
-        },
     }
-  }
 </script>
 
 <style scoped>
-.cart{
-  margin-top: 80px;
-}
-.cart-info{
-  overflow: hidden;
-  width: 1200px;
-  margin: auto;
-}
-.cart-top{
-  font-size: 18px;
-  color: #666;
-  margin: 25px 0;
-  font-weight: normal;
-}
-.cart-top span{
+  .cart {
+    margin-top: 80px;
+  }
+
+  .cart-info {
+    overflow: hidden;
+    width: 1200px;
+    margin: auto;
+  }
+
+  .cart-top {
+    font-size: 18px;
+    color: #666;
+    margin: 25px 0;
+    font-weight: normal;
+  }
+
+  .cart-top span {
     font-size: 12px;
     color: #d0d0d0;
     display: inline-block;
-}
-.cart-title{
+  }
+
+  .cart-title {
     background: #F7F7F7;
     height: 70px;
-}
-.calc{
-  margin-top: 25px;
-  margin-bottom: 40px;
-}
+  }
 
-.calc .count{
-  text-align: right;
-  margin-right: 10px;
-  vertical-align: middle;
-}
-.calc .count span{
+  .calc {
+    margin-top: 25px;
+    margin-bottom: 40px;
+  }
+
+  .calc .count {
+    text-align: right;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+
+  .calc .count span {
     font-size: 36px;
     color: #333;
-}
-.calc .cart-pay{
+  }
+
+  .calc .cart-pay {
     margin-top: 5px;
     width: 110px;
     height: 38px;
@@ -199,95 +337,112 @@
     font-size: 16px;
     text-align: center;
     cursor: pointer;
-}
-.cart-item{
-  height: 120px;
-  line-height: 120px;
-  margin-bottom: 30px;
-}
-.course-info img {
-  width: 175px;
-  height: 115px;
-  margin-right: 35px;
-  vertical-align: middle;
-  float: left;
-}
-.course-title{
-  float: left;
-  line-height: 32px;
-  margin-top: 26px;
-}
-.course-price{
-  line-height: 32px;
-  margin-top: 32px;
-}
-.course-price span{
-  text-decoration: line-through;
-  color: #5e5e5e;
-}
-.alipay{
-  display: inline-block;
-  height: 48px;
-  cursor: pointer;
-}
-.alipay img{
-  height: 100%;
-  width:auto;
-}
+  }
 
-.pay-text{
-  display: block;
-  text-align: right;
-  height: 100%;
-  line-height: 100%;
-  vertical-align: middle;
-  margin-top: 20px;
-}
-.discount{
-  text-align: right;
-  margin-top: 30px;
-}
-.coupon-box{
-  text-align: left;
-  padding-bottom: 22px;
-  padding-left:30px;
-  border-bottom: 1px solid #e8e8e8;
-}
-.coupon-box::after{
-  content: "";
-  display: block;
-  clear: both;
-}
-.icon-box{
-  float: left;
-}
-.icon-box .select-coupon{
-  float: left;
-  color: #666;
-  font-size: 16px;
-}
-.icon-box::after{
-  content:"";
-  clear:both;
-  display: block;
-}
-.select-icon{
-  width: 20px;
-  height: 20px;
-  float: left;
-}
-.select-icon img{
-  max-height:100%;
-  max-width: 100%;
-  margin-left: 10px;
-  margin-top: 2px;
-  transform: rotate(-90deg);
-  transition: transform .5s;
-}
-.is_show_select{
-  transform: rotate(0deg)!important;
-}
-.coupon-num{
+  .cart-item {
+    height: 120px;
+    line-height: 120px;
+    margin-bottom: 30px;
+  }
+
+  .course-info img {
+    width: 175px;
+    height: 115px;
+    margin-right: 35px;
+    vertical-align: middle;
+    float: left;
+  }
+
+  .course-title {
+    float: left;
+    line-height: 32px;
+    margin-top: 26px;
+  }
+
+  .course-price {
+    line-height: 32px;
+    margin-top: 32px;
+  }
+
+  .course-price span {
+    text-decoration: line-through;
+    color: #5e5e5e;
+  }
+
+  .alipay {
+    display: inline-block;
+    height: 48px;
+    cursor: pointer;
+  }
+
+  .alipay img {
+    height: 100%;
+    width: auto;
+  }
+
+  .pay-text {
+    display: block;
+    text-align: right;
+    height: 100%;
+    line-height: 100%;
+    vertical-align: middle;
+    margin-top: 20px;
+  }
+
+  .discount {
+    text-align: right;
+    margin-top: 30px;
+  }
+
+  .coupon-box {
+    text-align: left;
+    padding-bottom: 22px;
+    padding-left: 30px;
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  .coupon-box::after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+
+  .icon-box {
+    float: left;
+  }
+
+  .icon-box .select-coupon {
+    float: left;
+    color: #666;
+    font-size: 16px;
+  }
+
+  .icon-box::after {
+    content: "";
+    clear: both;
+    display: block;
+  }
+
+  .select-icon {
+    width: 20px;
+    height: 20px;
+    float: left;
+  }
+
+  .select-icon img {
+    max-height: 100%;
+    max-width: 100%;
+    margin-left: 10px;
+    margin-top: 2px;
+    transform: rotate(-90deg);
+    transition: transform .5s;
+  }
+
+  .is_show_select {
+    transform: rotate(0deg) !important;
+  }
+
+  .coupon-num {
     height: 22px;
     line-height: 22px;
     padding: 0 5px;
@@ -299,104 +454,137 @@
     background: #fa6240;
     border-radius: 2px;
     margin-left: 20px;
-}
-.sum-price-wrap{
+  }
+
+  .sum-price-wrap {
     float: right;
     font-size: 16px;
     color: #4a4a4a;
     margin-right: 45px;
-}
-.sum-price-wrap .sum-price{
-  font-size: 18px;
-  color: #fa6240;
-}
+  }
 
-.no-coupon{
-  text-align: center;
-  width: 100%;
-  padding: 50px 0px;
-  align-items: center;
-  justify-content: center; /* 文本两端对其 */
-  border-bottom: 1px solid rgb(232, 232, 232);
-}
-.no-coupon-tips{
-  font-size: 16px;
-  color: #9b9b9b;
-}
-.credit-box{
-  height: 30px;
-  margin-top: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end
-}
-.my_el_check_box{
-  position: relative;
-}
-.my_el_checkbox{
-  margin-right: 10px;
-  width: 16px;
-  height: 16px;
-}
-.discount-num1{
-  color: #9b9b9b;
-  font-size: 16px;
-  margin-right: 45px;
-}
-.discount-num2{
-  margin-right: 45px;
-  font-size: 16px;
-  color: #4a4a4a;
-}
-.sun-coupon-num{
-  margin-right: 45px;
-  margin-bottom:43px;
-  margin-top: 40px;
-  font-size: 16px;
-  color: #4a4a4a;
-  display: inline-block;
-}
-.sun-coupon-num span{
-  font-size: 18px;
-  color: #fa6240;
-}
-.coupon-list{
-  margin: 20px 0;
-}
-.coupon-list::after{
-  display: block;
-  content:"";
-  clear: both;
-}
-.coupon-item{
-  float: left;
-  margin: 15px 8px;
-  width: 180px;
-  height: 100px;
-  padding: 5px;
-  background-color: #fa3030;
-  cursor: pointer;
-}
-.coupon-list .active{
-  background-color: #fa9000;
-}
-.coupon-list .disable{
-  cursor: not-allowed;
-  background-color: #fa6060;
-}
-.coupon-condition{
-  font-size: 12px;
-  text-align: center;
-  color: #fff;
-}
-.coupon-name{
-  color: #fff;
-  font-size: 24px;
-  text-align: center;
-}
-.coupon-time{
-  text-align: left;
-  color: #fff;
-  font-size: 12px;
-}
+  .sum-price-wrap .sum-price {
+    font-size: 18px;
+    color: #fa6240;
+  }
+
+  .no-coupon {
+    text-align: center;
+    width: 100%;
+    padding: 50px 0px;
+    align-items: center;
+    justify-content: center; /* 文本两端对其 */
+    border-bottom: 1px solid rgb(232, 232, 232);
+  }
+
+  .no-coupon-tips {
+    font-size: 16px;
+    color: #9b9b9b;
+  }
+
+  .credit-box {
+    height: 30px;
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end
+  }
+
+  .my_el_check_box {
+    position: relative;
+  }
+
+  .my_el_checkbox {
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .discount-num1 {
+    color: #9b9b9b;
+    font-size: 16px;
+    margin-right: 45px;
+  }
+
+  .discount-num2 {
+    margin-right: 45px;
+    font-size: 16px;
+    color: #4a4a4a;
+  }
+
+  .sun-coupon-num {
+    margin-right: 45px;
+    margin-bottom: 43px;
+    margin-top: 40px;
+    font-size: 16px;
+    color: #4a4a4a;
+    display: inline-block;
+  }
+
+  .sun-coupon-num span {
+    font-size: 18px;
+    color: #fa6240;
+  }
+
+  .coupon-list {
+    margin: 20px 0;
+  }
+
+  .coupon-list::after {
+    display: block;
+    content: "";
+    clear: both;
+  }
+
+  .coupon-item {
+    float: left;
+    margin: 15px 8px;
+    width: 180px;
+    height: 100px;
+    padding: 5px;
+    background-color: #29c6e5;
+    cursor: pointer;
+  }
+
+  .coupon-list .active {
+    background-color: #ff0000;
+    position: relative;
+  }
+
+  .coupon-list .active::after {
+    border-left: 3px solid #ffffff;
+    border-bottom: 3px solid #ffffff;
+    display: block;
+    content: "";
+    width: 40px;
+    height: 20px;
+    position: absolute;
+    bottom: 20px;
+    right: 0;
+    transform: rotate(-45deg);
+  }
+
+  .coupon-list .disable {
+    cursor: not-allowed;
+    background-color: #f9b6b6;
+    opacity: 0.7;
+  }
+
+  .coupon-condition {
+    font-size: 12px;
+    text-align: center;
+    color: #fff;
+  }
+
+  .coupon-name {
+    color: #fff;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .coupon-time {
+    text-align: left;
+    color: #fff;
+    font-size: 12px;
+  }
 </style>

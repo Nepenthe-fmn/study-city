@@ -4,6 +4,7 @@ from django.utils import timezone as datetime
 import random
 from django_redis import get_redis_connection
 from courses.models import Course
+from django.db import transaction
 
 
 class OrderModelSerializer(serializers.ModelSerializer):
@@ -30,64 +31,74 @@ class OrderModelSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """生成订单"""
-        pay_type = validated_data.get("pay_type")
-        user = self.context["request"].user
-        order_number = datetime.now().strftime("%Y%m%d%H%I%S")+("%010d" % user.id)+str(random.randint(0,99999999))
-        order_total_price = 0
-        order_real_price = 0
-        order = Order.objects.create(
-            name="课程购买",
-            user=user,
-            total_price=order_total_price,
-            real_price=order_real_price,
-            order_number=order_number,
-            order_status=0,
-            pay_type=pay_type,
-            credit=0,
-            coupon=0,
-            order_desc="课程购买",
-        )
-
-        # 从购物车中查询所有勾选的商品信息
-        redis = get_redis_connection("cart")
-
-        dict_cart_bytes = redis.hgetall("cart_%s" % user.id)
-        set_select_bytes = redis.smembers("select_%s" % user.id)
-
-        data = []
-        for course_id_bytes, expire_bytes in dict_cart_bytes.items():
-            # 如果当前商品不是集合中勾选的商品信息,则直接跳过本轮循环
-            if course_id_bytes not in set_select_bytes:
-                continue
-
-            expire = expire_bytes.decode()
-            course_id = course_id_bytes.decode()
+        with transaction.atomic():
+            sid1 = transaction.savepoint()
             try:
-                course = Course.objects.get(pk=course_id)
-            except Course.DoesNotExist:
-                """商品没有了...."""
-                continue
+                pay_type = validated_data.get("pay_type")
+                user = self.context["request"].user
+                order_number = datetime.now().strftime("%Y%m%d%H%I%S")+("%010d" % user.id)+str(random.randint(0,99999999))
+                order_total_price=0
+                order_real_price=0
+                order = Order.objects.create(
+                    name="课程购买",
+                    user=user,
+                    total_price=order_total_price,
+                    real_price=order_real_price,
+                    order_number=order_number,
+                    order_status=0,
+                    pay_type=pay_type,
+                    credit=0,
+                    coupon=0,
+                    order_desc="课程购买",
+                )
 
-            # 在循环中把商品的其他信息添加到商品里面
-            price = float(course.get_price(expire))
-            discount_price = float(course.discount_price(price))
-            detail = OrderDetail.objects.create(
-                order=order,
-                course=course,
-                expire=expire,
-                expire_text=course.expire_text(expire),
-                price=price,
-                real_price=discount_price,
-                discount_name=course.discount_name
-            )
+                # 从购物车中查询所有勾选的商品信息
+                redis = get_redis_connection("cart")
 
-            detail.save()
+                dict_cart_bytes = redis.hgetall("cart_%s" % user.id)
+                set_select_bytes = redis.smembers("select_%s" % user.id)
 
-            order_total_price += price
-            order_total_price += discount_price
+                for course_id_bytes, expire_bytes in dict_cart_bytes.items():
+                    # 如果当前商品不是集合中勾选的商品信息,则直接跳过本轮循环
+                    if course_id_bytes not in set_select_bytes:
+                        continue
 
-        order.total_price = order_total_price
-        order.real_price = order_total_price
-        order.save()
+                    expire = expire_bytes.decode()
+                    course_id = course_id_bytes.decode()
+                    try:
+                        course = Course.objects.get(pk=course_id)
+                    except Course.DoesNotExist:
+                        """商品没有了...."""
+                        continue
 
-        return order
+                    # 在循环中把商品的其他信息添加到商品里面
+                    price = float(course.get_price(expire))
+                    discount_price = float(course.discount_price(price))
+                    detail = OrderDetail.objects.create(
+                        order=order,
+                        course=course,
+                        expire=expire,
+                        expire_text=course.expire_text(expire),
+                        price=price,
+                        real_price=discount_price,
+                        discount_name=course.discount_name
+                    )
+
+                    detail.save()
+                    order_total_price += price
+                    order_total_price += discount_price
+
+                order.total_price = order_total_price
+                order.real_price = order_total_price
+                order.save()
+                # 移除购物车中的商品
+                pipe = redis.pipeline()
+                pipe.multi()
+                for set_bytes in set_select_bytes:
+                    pipe.hdel("cart_%s" % user.id, set_bytes)
+                pipe.execute()
+                return order
+
+            except:
+                transaction.savepoint_rollback(sid1)
+                raise serializers.ValidationError("生成订单信息失败!")

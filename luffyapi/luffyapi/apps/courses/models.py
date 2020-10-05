@@ -81,7 +81,7 @@ class Course(BaseModel):
             if len(ret) > 0:
                 price = ret[0].price
         # 如果当前商品有参加到活动中，则计算返回价格
-        price = float(self.discount_price(price))
+        # price = float(self.discount_price(price))
         return price
 
     @property
