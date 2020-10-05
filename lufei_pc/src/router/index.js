@@ -6,6 +6,7 @@ import Register from "../components/users/Register";
 import Course from "../components/courses/Course";
 import Detail from "../components/courses/Detail";
 import Cart from "../components/cart/Cart";
+import Order from "../components/order/Order";
 Vue.use(Router);
 
 export default new Router({
@@ -39,6 +40,10 @@ export default new Router({
       path: '/cart',
       name: "Cart",
       component: Cart,
+    },{
+      path: '/order',
+      name: "Order",
+      component: Order,
     }
   ]
 })

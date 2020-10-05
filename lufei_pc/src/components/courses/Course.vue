@@ -46,10 +46,14 @@
                 <span class="free" v-if="lesson.free_trail">免费</span>
               </li>
             </ul>
-            <div class="pay-box">
-              <span class="discount-type">限时免费</span>
-              <span class="discount-price">￥0.00元</span>
-              <span class="original-price">原价：{{course.price}}元</span>
+            <div class="pay-box" v-if="course.discount_name">
+              <span class="discount-type">{{course.discount_name}}</span>
+              <span class="discount-price">￥{{course.discount_price}}元</span>
+              <span class="original-price" v-if="course.discount_price!=course.min_price">原价：{{course.min_price}}元</span>
+              <span class="buy-now">立即购买</span>
+            </div>
+            <div class="pay-box" v-else>
+              <span class="discount-price">￥ {{course.min_price}}元</span>
               <span class="buy-now">立即购买</span>
             </div>
           </div>
@@ -78,7 +82,7 @@
                 orders: "id",      // 课程排序字段说明
                 course_total: 0,   // 课程总数
                 page: 1,           // 当前页页码
-                size: 2,           // 每一页显示的数据量
+                size: 5,           // 每一页显示的数据量
             }
         },
         created() {

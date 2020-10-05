@@ -22,7 +22,7 @@ class CartViewSet(ViewSet):
             return Response({"message": "商品不存在!"}, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response({"message": "未知异常"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        expire = 0     # 购买周期，0表示没有设置购买周期
+        expire = course.min_expire     # 购买周期，0表示没有设置购买周期
         select = True  # 商品勾选状态
 
         # 2.保存数据到redis中
@@ -47,24 +47,29 @@ class CartViewSet(ViewSet):
 
         # 2. 重组数据结构，循环redis中的hash数据，创建一个商品列表
         data = []
+
         for course_id_bytes, expire_bytes in dict_cart_bytes.items():
             expire = expire_bytes.decode()
             course_id = course_id_bytes.decode()
+
             try:
                 course = Course.objects.get(pk=course_id)
             except:
                 """ 商品不存在就此此循环 """
                 continue
             # 2.1 循环中把商品的其他信息添加到商品里面
+            price = course.get_price(expire)
             data.append({
                 "course_id": course.id,
                 "course_name": course.name,
                 "course_img": course.course_img.url,
-                "price": course.get_price,
+                "price": price,
+                "discount_name": course.discount_name,
+                "discount_price": course.discount_price(price),
                 "expire": int(expire),
+                "expire_list": course.expire_list,
                 "select": True if course_id_bytes in set_select_bytes else False
             })
-
         # 3. 返回购物车中的商品列表、
         return Response(data)
 
@@ -76,12 +81,11 @@ class CartViewSet(ViewSet):
         select = request.data.get("select")
         print("1", user, course_id, select)
         # 2. 修改对应的勾选状态
+        print("select:", select)
         redis = get_redis_connection("cart")
         if select:
-            print(1)
             redis.sadd("select_%s" % user.id, course_id)
         else:
-            print(2)
             redis.srem("select_%s" % user.id, course_id)
 
         # 3. 返回响应结果
@@ -100,6 +104,60 @@ class CartViewSet(ViewSet):
         pipe.execute()
 
         return Response({"message": "从购物车中移除商品成功"})
+
+    def change_expire(self, request):
+        """修改购物车商品的购买有效期"""
+        # 1. 接收课程[课程id,有效期]
+        print(1)
+        course_id = request.data.get("course_id")
+        expire = request.data.get("expire")
+        # 2. 到redis中根据用户id作为键修改对应商品的有效期
+        user = request.user
+        redis = get_redis_connection("cart")
+        redis.hset("cart_%s" % user.id, course_id, expire)
+        # 3. 响应
+        print(2)
+        return Response({"message": "修改有效期成功!"})
+
+    def select_cart(self, request):
+        """ 获取购物车中勾选的商品信息 """
+        user = request.user
+        # 1. 从redis中提取购物车所有商品信息
+        redis = get_redis_connection("cart")
+        dict_cart_bytes = redis.hgetall("cart_%s" % user.id)
+        set_select_bytes = redis.smembers("select_%s" % user.id)
+
+        # 2. 循环redis中的hash数据,创建一个商品列表
+        data = []
+        for course_id_bytes, expire_bytes in dict_cart_bytes.items():
+            # 如果当前商品不是集合中勾选的商品信息,则直接跳过本轮循环
+            if course_id_bytes not in set_select_bytes:
+                continue
+
+            expire = expire_bytes.decode()
+            course_id = course_id_bytes.decode()
+            try:
+                course = Course.objects.get(pk=course_id)
+            except Course.DoesNotExist:
+                """商品没有了."""
+                continue
+            # 2.1 在循环中把商品的其他信息添加到商品里面
+            price = course.get_price(expire)
+            data.append({
+                "course_id": course.id,
+                "course_name": course.name,
+                "course_img": course.course_img.url,
+                "price": price,
+                "discount_price": course.discount_price(price),
+                "discount_name": course.discount_name,
+                "expire_text": course.expire_text(expire),
+            })
+
+        # 3. 返回购物车中的商品列表
+        return Response(data)
+
+
+
 
 
 

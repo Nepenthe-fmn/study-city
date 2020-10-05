@@ -5,17 +5,19 @@
       </div>
       <div class="cart_column column_2">
         <img :src="$settings.Host+course.course_img" alt="">
-        <span><router-link to="/course/detail/1">{{course.course_name}}</router-link></span>
+        <span>
+          <span><router-link to="/course/detail/1">{{course.course_name}}</router-link></span>
+          <span style="color: orange">{{course.discount_name}}</span>
+        </span>
       </div>
       <div class="cart_column column_3">
-        <el-select v-model="expire" size="mini" placeholder="请选择购买有效期" class="my_el_select">
-          <el-option label="1个月有效" value="30" key="30"></el-option>
-          <el-option label="2个月有效" value="60" key="60"></el-option>
-          <el-option label="3个月有效" value="90" key="90"></el-option>
-          <el-option label="永久有效" value="10000" key="10000"></el-option>
+        <el-select v-model="course.expire" size="mini" placeholder="请选择购买有效期" class="my_el_select">
+          <el-option :label="item.name" :value="item.time" v-for="item in course.expire_list" :key="item.time"></el-option>
         </el-select>
       </div>
-      <div class="cart_column column_4">¥{{course.price}}</div>
+      <div class="cart_column column_4" v-for="item in course.expire_list" v-if="item.time==course.expire">
+        ¥{{item.price}}
+      </div>
       <div class="cart_column column_4" @click="delete_course()">删除</div>
     </div>
 </template>
@@ -27,6 +29,9 @@ export default {
     watch: {
         "course.select"(){
             this.change_status();
+        },
+        "course.expire"(){
+            this.change_expire();
         }
     },
     data(){
@@ -37,7 +42,7 @@ export default {
     },
     methods: {
         change_status(){
-            console.log("1:",this.course.select,"2:",this.course.course_id);
+            // 商品状态切换
             this.$axios.put(`/cart/course/`, {
                 select: this.course.select,
                 course_id: this.course.course_id
@@ -52,6 +57,7 @@ export default {
             })
         },
         delete_course(){
+            // 移除购物车
             this.$axios.delete(`/cart/course/`, {
                 headers: {
                     Authorization: "jwt " + this.$settings.checkoutUserLogin(this),
@@ -59,8 +65,34 @@ export default {
                 params: {
                     course_id: this.course.course_id,
                 }
+            }).then(response=>{
+                // 移除成功
+                this.$emit("del_cart");  // 主操作在子集，子集向父级提交移除事件
+            }).catch(error=>{
+                console.log(error.response);
             })
-        }
+        },
+        change_expire(){
+            // 修改有效期选项
+            this.$axios.patch(`/cart/course/`,{
+                expire: this.course.expire,
+                course_id: this.course.course_id
+            },{
+                headers: {
+                    Authorization: "jwt " + this.$settings.checkoutUserLogin(this)
+                }
+            }).then(response=>{
+                // 当切换有效期以后,更新课程的价格.
+                for(let item of this.course.expire_list){
+                    if(this.course.expire != item.time){
+                      continue;
+                    }
+                    this.course.price = item.price;
+                }
+            }).catch(error=>{
+                console.log(error.response.data);
+            })
+        },
     }
 }
 </script>

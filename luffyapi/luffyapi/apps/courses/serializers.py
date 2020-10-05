@@ -17,14 +17,17 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    """ 课程详情 """
+    """ 课程列表 """
     teacher = TeacherSerializer()
 
     class Meta:
         model = Course
-        fields = ["id", "name", "course_img", "students",
-                  "lessons", "pub_lessons", "price",
-                  "teacher", "recomment_lesson_list"]
+        # fields = ["id", "name", "course_img", "students",
+        #           "lessons", "pub_lessons", "price",
+        #           "teacher", "recomment_lesson_list"]
+        fields = ["id", "name", "course_img", "students", "discount_name",
+                  "discount_price", "lessons", "pub_lessons",
+                  "min_price", "teacher", "recomment_lesson_list"]
 
 
 class CourseRetrieveSerializer(serializers.ModelSerializer):
@@ -34,8 +37,9 @@ class CourseRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ["id", "name", "course_img", "course_video", "students",
-                  "lessons", "pub_lessons", "price", "teacher", "brief",
-                  "level_name", "pub_date"]
+                  "lessons", "pub_lessons", "min_price", "teacher", "brief",
+                  "level_name", "pub_date", "discount_name", "discount_price",
+                  "activity_end_time"]
 
 
 class CourseCategoryModelSerializer(serializers.ModelSerializer):

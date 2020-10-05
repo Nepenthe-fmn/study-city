@@ -15,15 +15,21 @@
         <div class="wrap-right">
           <h3 class="course-name">{{course.name}}</h3>
           <p class="data">{{course.students}}人在学&nbsp;&nbsp;&nbsp;&nbsp;课程总时长：{{course.pub_lessons}}课时/{{course.lessons}}课时&nbsp;&nbsp;&nbsp;&nbsp;难度：{{course.level_name}}</p>
-          <div class="sale-time">
-            <p class="sale-type">限时免费</p>
-            <p class="expire">距离结束：仅剩 01天 04小时 33分 <span class="second">08</span> 秒</p>
+          <div v-if="course.activity_end_time > 0">
+            <div class="sale-time">
+              <p class="sale-type">{{course.discount_name}}</p>
+              <p class="expire">距离结束：仅剩 {{has_day}}天 {{has_hours}}小时 {{has_minutes}}分 <span class="second">{{has_seconds}}</span> 秒</p>
+            </div>
+            <p class="course-price">
+              <span>活动价</span>
+              <span class="discount">¥ {{course.discount_price}}</span>
+              <!--<span class="discount">¥ {{course.discount_price.toFiexd(2)}}</span>-->
+              <span class="original">¥ {{course.min_price}}</span>
+            </p>
           </div>
-          <p class="course-price">
-            <span>活动价</span>
-            <span class="discount">¥0.00</span>
-            <span class="original">¥29.00</span>
-          </p>
+          <div v-else>
+            <p class="course-price"><span class="discount">¥ {{course.min_price && course.min_price.toFixed(2)}}</span></p>
+          </div>
           <div class="buy">
             <div class="buy-btn">
               <button class="buy-now">立即购买</button>
@@ -130,6 +136,28 @@
                 }
             }
         },
+        computed: {
+            has_day(){
+                let day = parseInt(this.course.activity_end_time/60/60/24);
+                day = day<10?('0'+day):day;
+                return day
+            },
+            has_hours(){
+                let  hours = parseInt(this.course.activity_end_time/60/60%24);
+                hours = hours<10?('0'+hours):hours;
+                return hours
+            },
+            has_minutes(){
+                let minutes = parseInt(this.course.activity_end_time / 60 % 60);
+                minutes = minutes<10?('0'+minutes):minutes;
+                return minutes;
+            },
+            has_seconds(){
+                let seconds = parseInt(this.course.activity_end_time % 60);
+                seconds = seconds<10?('0'+seconds):seconds;
+                return seconds;
+            }
+        },
         created() {
             this.course.id = this.$route.params.id;
             this.get_course();
@@ -138,20 +166,22 @@
         methods: {
             onPlayerPlay() {
                 // alert("开始播放视频，关闭广告");
-            }
-            ,
+            },
             onPlayerPause() {
                 // alert("暂停广告");
             },
             get_course() {
                 // 获取课程信息
-                this.$axios.get(`/courses/${this.course.id}/`).then(response => {
+                this.$axios.get(`/courses/${this.course.id}/`).then(response=>{
                     this.course = response.data;
                     this.playerOptions.poster = response.data.course_img;
                     this.playerOptions.sources[0].src = response.data.course_video;
-                }).catch(error => {
+                    setInterval(()=>{
+                        this.course.activity_end_time=this.course.activity_end_time-1;
+                    }, 1000);
+                }).catch(error=>{
                     console.log(error.response.data);
-                })
+                });
             },
             add_image_url(content) {
                 while (content.search(`src="/media`) !== -1) {
@@ -200,8 +230,7 @@
                     })
                 }
             }
-        }
-        ,
+        },
         components: {
             Header,
             Footer,

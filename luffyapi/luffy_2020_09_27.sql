@@ -234,7 +234,7 @@ CREATE TABLE `ly_banner` (
 
 LOCK TABLES `ly_banner` WRITE;
 /*!40000 ALTER TABLE `ly_banner` DISABLE KEYS */;
-INSERT INTO `ly_banner` VALUES (1,'alex',1,1,0,'2020-09-14 18:00:56.711116','2020-09-14 18:00:56.711159','banner/alex_7UcCjLv.jpeg','alex','http://www.luffy.com/alex'),(4,'banne',2,1,0,'2020-09-14 18:02:27.942230','2020-09-14 18:02:27.942261','banner/banner1_M4xhV3i.png','banne','http://www.luffy.com/bann2'),(5,'bann2',3,1,0,'2020-09-14 18:02:46.367044','2020-09-14 18:02:46.367079','banner/banner2_CEbvjhd.png','bann2','http://www.luffy.com/bann2');
+INSERT INTO `ly_banner` VALUES (1,'alex',1,1,0,'2020-09-14 18:00:56.711116','2020-09-14 18:00:56.711159','banner/alex.jpeg','alex','http://www.luffy.com/alex'),(4,'banne',2,1,0,'2020-09-14 18:02:27.942230','2020-09-14 18:02:27.942261','banner/banner1.png','banne','http://www.luffy.com/bann2'),(5,'bann2',3,1,0,'2020-09-14 18:02:46.367044','2020-09-14 18:02:46.367079','banner/banner2.png','bann2','http://www.luffy.com/bann2');
 /*!40000 ALTER TABLE `ly_banner` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -379,7 +379,7 @@ CREATE TABLE `ly_course_lesson` (
   KEY `ly_course_lesson_course_id_1e932817_fk_ly_course_id` (`course_id`),
   CONSTRAINT `ly_course_lesson_chapter_id_09ff8644_fk_ly_course_chapter_id` FOREIGN KEY (`chapter_id`) REFERENCES `ly_course_chapter` (`id`),
   CONSTRAINT `ly_course_lesson_course_id_1e932817_fk_ly_course_id` FOREIGN KEY (`course_id`) REFERENCES `ly_course` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -753,4 +753,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-09-27  1:26:38
+-- Dump completed on 2020-09-27 21:06:22
