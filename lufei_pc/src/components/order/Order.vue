@@ -37,15 +37,12 @@
               <a class="select-icon" @click="use_coupon=!use_coupon"><img class="sign"
                                                                           :class="use_coupon?'is_show_select':''"
                                                                           src="../../../static/image/12.png" alt=""></a>
-              <span class="coupon-num">有3张可用</span>
+              <span class="coupon-num">有{{coupon_list.length}}张可用</span>
             </div>
             <p class="sum-price-wrap">商品总金额：<span class="sum-price">{{orginal_total_price}}元</span></p>
           </div>
           <div id="collapseOne" v-if="use_coupon">
             <ul class="coupon-list" v-if="coupon_list.length>0">
-<!--              <li class="coupon-item"-->
-<!--                  :class="{disable:total_price<item.coupon.condition || check_duration(item.start_time,item.coupon.duration),active:coupon==item.id}"-->
-<!--                  @click="select_coupon(item)" :key="key" v-for="(item,key) in coupon_list">-->
               <li class="coupon-item"
                   :class="coupon_class(item, false)"
                   @click="select_coupon(item, true)" :key="key" v-for="(item,key) in coupon_list">
@@ -53,9 +50,7 @@
                 <p class="coupon-condition" v-if="item.coupon.condition>0">满{{item.coupon.condition}}元可以使用</p>
                 <p class="coupon-condition" v-else-if="item.coupon.coupon_type===2">《{{item.coupon.course_info.course_name}}》<br>课程专属</p>
                 <p class="coupon-condition" v-else>任意使用</p>
-<!--                <p class="coupon-time start_time">开始时间：{{item.start_time.replace("T"," ")}}</p>-->
                 <p class="coupon-time start_time">开始时间：{{format(item.start_timestamp)}}</p>
-<!--                <p class="coupon-time end_time">过期时间：{{get_end_time(item.start_time,item.coupon.duration)}}</p>-->
                 <p class="coupon-time end_time">过期时间：{{format(item.end_timestamp)}}</p>
               </li>
             </ul>
@@ -69,7 +64,9 @@
             <el-checkbox class="my_el_checkbox" v-model="use_credit"></el-checkbox>
           </label>
           <p class="discount-num1" v-if="!use_credit">使用我的贝里</p>
-          <p class="discount-num2" v-if="use_credit"><span>总积分：12000，已抵扣 ￥0，本次花费0积分</span></p>
+          <p class="discount-num2" v-if="use_credit"><span>总积分：{{my_credit-current_credit}}，可以抵扣
+            <el-input-number :min="0" :max="max_credit" size="mini" v-model="current_credit"></el-input-number>
+            积分，已抵扣 ￥{{credit_price}}。</span></p>
         </div>
         <p class="sun-coupon-num">优惠券抵扣：<span>{{coupon_price.toFixed(2)}}元</span></p>
       </div>
@@ -126,13 +123,29 @@
                     this.coupon = 0;
                     this.coupon_price = 0;
                 }
+            },
+            current_credit(){
+                this.credit_price = parseFloat(this.current_credit/this.credit_rmb).toFixed(2);
+            },
+            use_credit(){
+                // 如果用户关闭了积分兑换窗口，则还原积分
+                this.current_credit = 0;
             }
         },
         created() {
+            this.my_credit = sessionStorage.credit;
+            this.credit_rmb = sessionStorage.credit_rmb;
+            if(this.my_credit == null || this.credit_rmb == null){
+                this.$message.error("当前用户信息已失效！请重新登录");
+                localStorage.removeItem("token");
+                sessionStorage.removeItem("token");
+            }
             this.token = this.$settings.checkoutUserLogin(this);
             if(this.token){
               this.get_course_list();
               this.get_user_coupon();
+            }else{
+                this.$router.push("/login");
             }
         },
         computed: {
@@ -147,6 +160,15 @@
             },
             real_total_price(){
                 return this.total_price - this.coupon_price - this.credit_price;
+            },
+            max_credit(){
+                // 计算用户本次订单中能使用的最大积分数量
+                let price_to_credit = (this.total_price - this.coupon_price) * this.credit_rmb;
+                if(this.my_credit < price_to_credit){
+                    return parseInt(this.my_credit)
+                }else{
+                    return price_to_credit;
+                }
             }
         },
         methods: {
@@ -181,7 +203,7 @@
                         if (course_info.discount_price<course_info.prise){
                             this.coupon_prise = 0;
                         }else{
-                            this.coupon_price = course_info.price*(1-sale);
+                            this.coupon_price = course_info.discount_price*(1-sale);
                         }
                     }
                 }
@@ -263,14 +285,17 @@
                 // 上传订单相关信息
                 this.$axios.post(`/orders/`, {
                     pay_type: 1,
-                    credit: 0,
-                    coupon: 0,
+                    credit: this.current_credit,
+                    coupon: this.coupon,
                 }, {
                     headers: {
                         Authorization: "jwt " + this.$settings.checkoutUserLogin(this)
                     },
                 }).then(response => {
-                    console.log(response.data);
+                    // 扣除积分
+                    sessionStorage.user_credit-=this.current_credit;
+                    this.my_credit-=this.current_credit;
+                    // console.log(response.data);
                 }).catch(error => {
                     console.log(error.response.data);
                 })

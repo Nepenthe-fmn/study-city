@@ -79,9 +79,7 @@ class CartViewSet(ViewSet):
         user = request.user
         course_id = request.data.get("course_id")
         select = request.data.get("select")
-        print("1", user, course_id, select)
         # 2. 修改对应的勾选状态
-        print("select:", select)
         redis = get_redis_connection("cart")
         if select:
             redis.sadd("select_%s" % user.id, course_id)
@@ -108,7 +106,6 @@ class CartViewSet(ViewSet):
     def change_expire(self, request):
         """修改购物车商品的购买有效期"""
         # 1. 接收课程[课程id,有效期]
-        print(1)
         course_id = request.data.get("course_id")
         expire = request.data.get("expire")
         # 2. 到redis中根据用户id作为键修改对应商品的有效期
@@ -116,7 +113,6 @@ class CartViewSet(ViewSet):
         redis = get_redis_connection("cart")
         redis.hset("cart_%s" % user.id, course_id, expire)
         # 3. 响应
-        print(2)
         return Response({"message": "修改有效期成功!"})
 
     def select_cart(self, request):

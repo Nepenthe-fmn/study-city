@@ -69,6 +69,9 @@
               // 退出登录处理
               localStorage.removeItem("token");
               sessionStorage.removeItem("token");
+              // 记录用户积分
+              sessionStorage.removeItem("user_credit");
+              sessionStorage.removeItem("credit_rmb");
               this.token = "";
           }
 

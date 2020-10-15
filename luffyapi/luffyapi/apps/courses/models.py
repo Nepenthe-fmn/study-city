@@ -100,17 +100,16 @@ class Course(BaseModel):
         data = [{
             "id": item.id, "time": item.time,
             "name": item.name,
-            "price": self.discount_price(item.price)
-            # "price": item.price
+            "price": item.price,
+            "discount_price": self.discount_price(item.price)
         } for item in data_list]
         # 判断当前课程是否是永久购买
         if self.price > 0:
             data.append({
                 "id": 0, "time": -1,
                 "name": "永久有效",
-                "price": self.discount_price(self.price)
-                # todo 这里有问题
-                # "price": self.price
+                "price": self.price,
+                "discount_price": self.discount_price(self.price)
             })
         return data
 
@@ -156,7 +155,6 @@ class Course(BaseModel):
                 sale_price = min_price * float(sale[1:])
             elif sale[0] == "-":
                 """ 限时减免 """
-                # todo bug当限时折扣出现多条件时无法判断符合条件
                 sale_price = min_price - float(sale[1:])
             elif sale[0] == "满":
                 """ 限时满减 """

@@ -20,7 +20,6 @@
         methods:{
             get_banner(){
                 this.$axios.get(`/banner/`).then((response)=>{
-                    console.log('1:', response.data);
                     this.banner_list = response.data;
                 }).catch(error=>{
                     this.$message.error("网络异常，轮播图无法显示！")

@@ -8,6 +8,16 @@ FOOTER_NAV_LENGTH = 10
 SMS_EXPIRE_TIME = 60
 # 短信冷却有效时间
 SMS_INTERVAL_TIME = 60
-
+# 课时列表推荐课程数量
 RECOMMEND_LESSON_SIZE = 4
+# 积分换算比例
+RMB_CREDIT = 10
+
+
+
+
+
+
+
+
 

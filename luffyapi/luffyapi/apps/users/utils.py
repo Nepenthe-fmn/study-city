@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.conf import settings
 from urllib.parse import urlencode
 from urllib.request import urlopen
+from luffyapi.settings import constants
 
 
 class AuthModelBackend(ModelBackend):
@@ -60,7 +61,10 @@ def jwt_response_payload_handler(token, user=None, request=None):
         'token': token,
         'user_id': user.id,
         'avatar': user.avatar.url if user.avatar else "",
-        'nickname': user.name if user.name else ""
+        'nickname': user.name if user.name else "",
+        # 返回用户积分和换算比例
+        'user_credit': user.credit,
+        'credit_rmb': constants.RMB_CREDIT,
     }
 
 

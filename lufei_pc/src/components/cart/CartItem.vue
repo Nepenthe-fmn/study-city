@@ -16,7 +16,7 @@
         </el-select>
       </div>
       <div class="cart_column column_4" v-for="item in course.expire_list" v-if="item.time==course.expire">
-        ¥{{item.price}}
+        ¥{{item.discount_price}}
       </div>
       <div class="cart_column column_4" @click="delete_course()">删除</div>
     </div>

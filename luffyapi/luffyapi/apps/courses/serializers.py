@@ -22,9 +22,6 @@ class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        # fields = ["id", "name", "course_img", "students",
-        #           "lessons", "pub_lessons", "price",
-        #           "teacher", "recomment_lesson_list"]
         fields = ["id", "name", "course_img", "students", "discount_name",
                   "discount_price", "lessons", "pub_lessons",
                   "min_price", "teacher", "recomment_lesson_list"]
@@ -43,7 +40,7 @@ class CourseRetrieveSerializer(serializers.ModelSerializer):
 
 
 class CourseCategoryModelSerializer(serializers.ModelSerializer):
-    """ 课程详情 """
+    """ 课程章节 """
     class Meta:
         model = CourseChapter
         fields = ['id', 'number', 'name', 'summary', 'lesson_list']

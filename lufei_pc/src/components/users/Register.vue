@@ -88,10 +88,11 @@
                     sessionStorage.user_id = response.data.id;
                     sessionStorage.user_avatar = response.data.avatar === null ? "" : response.data.avatar;
                     sessionStorage.user_name = response.data.name;
+                    // 记录用户积分
+                    sessionStorage.credit = response.data.user_credit;
+                    sessionStorage.credit_rmb = response.data.credit_rmb;
                     localStorage.removeItem("token");
                     localStorage.removeItem("user_id");
-                    localStorage.removeItem("user_avatar");
-                    localStorage.removeItem("user_name");
                     // 跳转页面
                     this.$confirm('注册成功!是否跳转到个人中心?', '网站提示', {
                         confirmButtonText: '确定',

@@ -30,6 +30,7 @@ class CourseRetrieveAPIView(RetrieveAPIView):
 
 
 class CourseChapterListAPIView(ListAPIView):
+    """ 章节/课时 """
     queryset = CourseChapter.objects.filter(is_show=True, is_delete=False).order_by("number")
     serializer_class = CourseCategoryModelSerializer
     filter_backends = [DjangoFilterBackend, ]

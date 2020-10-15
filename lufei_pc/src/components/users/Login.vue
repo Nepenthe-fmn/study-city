@@ -88,6 +88,10 @@
                     localStorage.user_id = response.data.user_id;
                     localStorage.user_avatar = response.data.avatar;
                     localStorage.user_name = response.data.nickname;
+                    // 记录用户积分
+                    sessionStorage.credit = response.data.user_credit;
+                    sessionStorage.credit_rmb = response.data.credit_rmb;
+
                     // 跳转页面
                     this.$confirm('登录成功!是否跳转到首页?', '网站提示', {
                         confirmButtonText: '确定',

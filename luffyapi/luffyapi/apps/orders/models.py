@@ -29,9 +29,9 @@ class Order(BaseModel):
     user = models.ForeignKey(User, related_name='user_orders', on_delete=models.DO_NOTHING,verbose_name="下单用户")
 
     class Meta:
-        db_table="ly_order"
-        verbose_name= "订单记录"
-        verbose_name_plural= "订单记录"
+        db_table = "ly_order"
+        verbose_name = "订单记录"
+        verbose_name_plural = "订单记录"
 
     def __str__(self):
         return "%s,总价: %s,实付: %s" % (self.order_title, self.total_price, self.real_price)
@@ -50,9 +50,9 @@ class OrderDetail(BaseModel):
     discount_name = models.CharField(max_length=120,default="",verbose_name="优惠类型")
 
     class Meta:
-        db_table="ly_order_detail"
-        verbose_name= "订单详情"
-        verbose_name_plural= "订单详情"
+        db_table = "ly_order_detail"
+        verbose_name = "订单详情"
+        verbose_name_plural = "订单详情"
 
     def __str__(self):
         return "%s" % (self.course.name)
