@@ -16,17 +16,17 @@ class Order(BaseModel):
         (1, '支付宝'),
         (2, '微信支付'),
     )
-    order_title = models.CharField(max_length=150,verbose_name="订单标题")
+    order_title = models.CharField(max_length=150, verbose_name="订单标题")
     total_price = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="订单总价", default=0)
     real_price = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="实付金额", default=0)
-    order_number = models.CharField(max_length=64,verbose_name="订单号")
+    order_number = models.CharField(max_length=64, verbose_name="订单号")
     order_status = models.SmallIntegerField(choices=status_choices, default=0, verbose_name="订单状态")
     pay_type = models.SmallIntegerField(choices=pay_choices, default=1, verbose_name="支付方式")
     credit = models.IntegerField(default=0, verbose_name="使用的积分数量")
     coupon = models.IntegerField(default=0, verbose_name="用户优惠券ID")
     order_desc = models.TextField(max_length=500, verbose_name="订单描述")
     pay_time = models.DateTimeField(null=True, verbose_name="支付时间")
-    user = models.ForeignKey(User, related_name='user_orders', on_delete=models.DO_NOTHING,verbose_name="下单用户")
+    user = models.ForeignKey(User, related_name='user_orders', on_delete=models.DO_NOTHING, verbose_name="下单用户")
 
     class Meta:
         db_table = "ly_order"

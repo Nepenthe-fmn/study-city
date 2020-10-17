@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from luffyapi.utils.models import BaseModel
 from luffyapi.settings import constants
+from courses.models import Course
 # Create your models here.
 
 
@@ -44,5 +45,25 @@ class Credit(BaseModel):
         else:
             oper_text = "减少"
         return "[%s]%s%s%s积分" % (self.get_operation_display(),self.user.name, oper_text, abs(self.number))
+
+
+class UserCourse(BaseModel):
+    """ 用户的课程购买记录 """
+    user = models.ForeignKey(User, related_name='user2courses', on_delete=models.CASCADE,verbose_name="用户")
+    course = models.ForeignKey(Course, related_name='course2users', on_delete=models.CASCADE, verbose_name="课程名称")
+    last_time = models.DateTimeField(verbose_name="最近一次购买时间")
+    has_time = models.DateTimeField(verbose_name="购买过期时间")
+
+    class Meta:
+        db_table = 'ly_user_course'
+        verbose_name = '用户课程购买记录'
+        verbose_name_plural = verbose_name
+
+
+
+
+
+
+
 
 

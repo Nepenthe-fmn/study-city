@@ -295,11 +295,33 @@
                     // 扣除积分
                     sessionStorage.user_credit-=this.current_credit;
                     this.my_credit-=this.current_credit;
+                    // 扣除优惠券
+
+                    // 发起支付
+                    console.log(response.data.order_number);
+                    this.payhander(response.data.order_number);
                     // console.log(response.data);
                 }).catch(error => {
                     console.log(error.response.data);
                 })
             },
+            payhander(order_number){
+                // 发起支付处理
+                this.$axios.get(`/payments/alipay/`, {
+                    params:{
+                        order_number,
+                    },
+                    headers:{
+                        Authorization: "jwt " + this.$settings.checkoutUserLogin(this),
+                    }
+                }).then(response=>{
+                    // 发送链接地址
+                    console.log(response.data);
+                    location.href = response.data;
+                }).catch(error=>{
+                    console.log(error.response.data.message);
+                })
+            }
         }
     }
 </script>

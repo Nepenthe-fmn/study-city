@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# SECURITY WARNING: keep the secret keys used in production secret!
 SECRET_KEY = '(j%k$udj)5803#j8-ew3qsyb=y@y7g#x@58vu!(t_&r&s3_^h2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -304,7 +304,17 @@ CKEDITOR_CONFIGS = {
 
 CKEDITOR_UPLOAD_PATH = ''  # 上传文件保存路径，留空则保存django的文件上传路径
 
-
+# 支付宝配置信息
+ALIAPY = {
+    #  "gateway_url": "https://openapi.alipay.com/gateway.do?",  # 真实支付宝网关地址
+    "gateway_url": "https://openapi.alipaydev.com/gateway.do?",  # 沙箱支付宝网关地址
+    "appid": "2021000119635206",  # 应用ID
+    "app_private_key_path": os.path.join(BASE_DIR, "apps/payments/keys/app_private_key.pem"),
+    "alipay_public_key_path": os.path.join(BASE_DIR, "apps/payments/keys/alipay_public_key.pem"),
+    "sign_type": "RSA2",  # 秘钥加密类型
+    "return_url": "http://www.luffycity.cn:8080/payments/alipay/result",  # 同步回调地址
+    "notify_url": "http://api.luffycity.cn:8000/payments/alipay/result",  # 异步结果通知
+}
 
 
 

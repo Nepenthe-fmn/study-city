@@ -14,8 +14,8 @@ class OrderModelSerializer(serializers.ModelSerializer):
     """ 订单应用 """
     class Meta:
         model = Order
-        fields = ["pay_type", "credit", "coupon", "total_price","real_price","order_number"]
-        read_only_fields = ["total_price","real_price","order_number"]
+        fields = ["pay_type", "credit", "coupon", "total_price", "real_price", "order_number"]
+        read_only_fields = ["total_price", "real_price", "order_number"]
 
     def validate(self, attrs):
         """验证客户端发送过来的数据"""
@@ -121,7 +121,6 @@ class OrderModelSerializer(serializers.ModelSerializer):
                             if user_coupon.coupon.coupon_type == 1:
                                 """ 减免 """
                                 coupon_price = sale
-                                print(2)
                             else:
                                 """ 折扣 """
                                 coupon_price = discount_price * (1 - sale)

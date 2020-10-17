@@ -53,7 +53,7 @@
                     if( !course.select ){
                         continue;
                     }
-                    total += parseFloat(course.price);
+                    total += parseFloat(course.discount_price);
                 }
                 return total.toFixed(2)
             }
