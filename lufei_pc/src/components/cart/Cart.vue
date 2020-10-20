@@ -66,7 +66,6 @@
                         Authorization: "jwt " + this.$settings.checkoutUserLogin(this)
                     }
                 }).then(response => {
-                    console.log("car:response.data:", response.data);
                     this.course_list = response.data
                 }).catch(error => {
                     console.log(error.response.data)

@@ -51,7 +51,7 @@ export default {
                     Authorization: "jwt " + this.$settings.checkoutUserLogin(this)
                 }
             }).then(response=>{
-                console.log(response.data);
+                console.log();
             }).catch(error=>{
                 console.log(error.response.data);
             })

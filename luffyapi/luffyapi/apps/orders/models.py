@@ -36,6 +36,9 @@ class Order(BaseModel):
     def __str__(self):
         return "%s,总价: %s,实付: %s" % (self.order_title, self.total_price, self.real_price)
 
+    def order_status_text(self):
+        return self.get_order_status_display()
+
 
 class OrderDetail(BaseModel):
     """

@@ -251,8 +251,11 @@ class CourseChapter(BaseModel):
         data_list = [{
             "id": lesson.id,
             "name": lesson.name,
+            "label": lesson.name,
             "free_trail": lesson.free_trail,
             "number": lesson.number,
+            "lesson_type": lesson.lesson_type,
+            "lesson_link": lesson.lesson_link,
             "duration": lesson.duration
         } for lesson in lesson_list]
 

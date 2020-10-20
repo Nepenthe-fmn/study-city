@@ -316,5 +316,10 @@ ALIAPY = {
     "notify_url": "http://api.luffycity.cn:8000/payments/alipay/result",  # 异步结果通知
 }
 
-
+# 保利威视频加密服务
+POLYV_CONFIG = {
+    "userId": "b94978510f",  # 用户ID/appid
+    "secretkey": "8RKY40w5w5",  # 秘钥
+    "tokenUrl": "https://hls.videocc.net/service/v1/token",
+}
 

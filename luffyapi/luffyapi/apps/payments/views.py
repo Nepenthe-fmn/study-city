@@ -111,7 +111,7 @@ class AlipayResultAPIView(APIView):
                             "course_name": detail.course.name
                         })
                     order_info = {
-                        "pay_time": order.pay_time,
+                        "pay_time": order.pay_time.timestamp(),
                         "real_price": order.real_price,
                         "course_list": course_list
                     }

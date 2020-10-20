@@ -8,6 +8,10 @@ import Detail from "../components/courses/Detail";
 import Cart from "../components/cart/Cart";
 import Order from "../components/order/Order";
 import Success from "../components/order/Success";
+import User from "../components/users/User";
+import UserOrder from "../components/users/UserOrder";
+import Player from "../components/Polyv/Player";
+
 Vue.use(Router);
 
 export default new Router({
@@ -49,6 +53,21 @@ export default new Router({
       path: '/payments/alipay/result',
       name: "Success",
       component: Success,
-    }
+    },{
+      path: '/my',
+      name: "User",
+      component: User,
+      children: [
+        {
+          path:"order",
+          name: "UserOrder",
+          component: UserOrder
+        }
+      ]
+    },{
+      path: '/player',
+      name: "Player",
+      component: Player
+    },
   ]
 })

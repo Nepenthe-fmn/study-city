@@ -12,7 +12,8 @@ SMS_INTERVAL_TIME = 60
 RECOMMEND_LESSON_SIZE = 4
 # 积分换算比例
 RMB_CREDIT = 10
-
+# 订单超时时间
+ORDER_TIMEOUT = 1 * 60 * 60
 
 
 

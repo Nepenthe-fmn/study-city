@@ -11,7 +11,7 @@ export default {
       vm.$axios.post(`/users/verify/`, {
         token: vm.token,
       }).catch(error=>{
-        if(error.response.status == 400){
+        if(error.response.status === 400){
           vm.token='';
           sessionStorage.removeItem("token");
           localStorage.removeItem("token");

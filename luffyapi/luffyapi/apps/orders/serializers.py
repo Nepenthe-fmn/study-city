@@ -184,3 +184,42 @@ class OrderModelSerializer(serializers.ModelSerializer):
             except:
                 transaction.savepoint_rollback(sid1)
                 raise serializers.ValidationError("生成订单信息失败!")
+
+
+class CourseModelSerializer(serializers.ModelSerializer):
+    """ 课程详情 """
+    class Meta:
+        model = Course
+        fields = ["id", "name", "course_img"]
+
+
+class OrderDetailListModelSerializer(serializers.ModelSerializer):
+    """ 订单详情 """
+    course = CourseModelSerializer()
+
+    class Meta:
+        model = OrderDetail
+        fields = ("price", "real_price", "discount_name",
+                  "expire_text", "course")
+
+
+class OrderListModelSerializer(serializers.ModelSerializer):
+    """订单列表"""
+    order_courses = OrderDetailListModelSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ("id", "created_time", "pay_time",
+                  "order_number", "real_price",
+                  "total_price", "order_status",
+                  "order_status_text", "pay_type",
+                  "order_courses")
+
+
+
+
+
+
+
+
+

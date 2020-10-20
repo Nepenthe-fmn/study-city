@@ -10,11 +10,11 @@ log = logging.getLogger("django")
 # 异步任务监听
 class SMSTask(Task):
     def on_success(self, retval, task_id, args, kwargs):
-        print('任务执行成功!')
+        print('Success!')
         return super().on_success(retval, task_id, args, kwargs)
 
     def on_failure(self, exc, task_id, args, kwargs, einfo):
-        print('任务执行失败!')
+        print('Fail!')
         return super().on_failure(exc, task_id, args, kwargs, einfo)
 
     def after_return(self, status, retval, task_id, args, kwargs, einfo):
@@ -29,7 +29,7 @@ class SMSTask(Task):
 @app.task(name="send_sms", base=SMSTask)
 def send_sms(mobile, template_code):
     """ 发送短信 """
-    print("发送短信！")
+    # print("Send！")
     try:
         ret = sms.send_sms(template_code, mobile, settings.SMS_TEMPLATE_ID["register"])
         ret = json.loads(ret)

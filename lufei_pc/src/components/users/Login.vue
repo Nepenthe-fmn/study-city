@@ -55,7 +55,6 @@
         methods: {
             captcha() {
                 let captcha1 = new TencentCaptcha(this.$settings.TC_captcha.app_id, res => {
-                    console.log("res.ret:", res.ret);
                     if (res.ret == 0) {
                         this.loginHander(res.ticket, res.randstr);
                     }

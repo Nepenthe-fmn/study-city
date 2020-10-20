@@ -106,7 +106,6 @@
                         this.$router.push("/");
                     });
                 }).catch(error => {
-                    console.log("error:", error.response.data);
                     this.$message.error("注册失败! " + error.response.data);
                 })
             },

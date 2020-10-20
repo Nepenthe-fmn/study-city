@@ -298,7 +298,6 @@
                     // 扣除优惠券
 
                     // 发起支付
-                    console.log(response.data.order_number);
                     this.payhander(response.data.order_number);
                     // console.log(response.data);
                 }).catch(error => {
@@ -316,7 +315,6 @@
                     }
                 }).then(response=>{
                     // 发送链接地址
-                    console.log(response.data);
                     location.href = response.data;
                 }).catch(error=>{
                     console.log(error.response.data.message);
