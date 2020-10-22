@@ -1,5 +1,5 @@
 export default {
-  Host: "http://api.luffycity.cn:8000",
+  Host: "http://api.bzboy.info:9000",
   TC_captcha:{
     app_id: "2050295557",
   },

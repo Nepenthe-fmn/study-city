@@ -51,13 +51,13 @@ INSTALLED_APPS = [
     'ckeditor',             # 富文本编译器
     'ckeditor_uploader',    # 富文本编译器上传图片
 
-    'home',                 # 主页面的应用
-    'users',                # 用户应用
-    'courses',              # 课程应用
-    'cart',                 # 购物车应用
-    'orders',               # 订单应用
-    'coupon',               # 优惠券应用
-    'payments',             # 支付功能
+    'home.apps.HomeConfig',                 # 主页面的应用
+    'users.apps.UsersConfig',                # 用户应用
+    'courses.apps.CourseConfig',              # 课程应用
+    'cart.apps.CartConfig',                 # 购物车应用
+    'orders.apps.OrdersConfig',               # 订单应用
+    'coupon.apps.CouponConfig',               # 优惠券应用
+    'payments.apps.PaymentsConfig',             # 支付功能
 ]
 
 # 配置文件中注册users应用
