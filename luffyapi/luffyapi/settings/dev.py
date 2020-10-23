@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 import sys
 import datetime
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent  # 项目的主应用目录
@@ -27,9 +28,9 @@ sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 SECRET_KEY = '(j%k$udj)5803#j8-ew3qsyb=y@y7g#x@58vu!(t_&r&s3_^h2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["api.luffycity.cn"]
+ALLOWED_HOSTS = ["api.bzboy.info"]
 
 
 # Application definition
@@ -198,7 +199,7 @@ AUTHENTICATION_BACKENDS = ['users.utils.AuthModelBackend',]
 
 # CORS组的配置信息
 CORS_ORIGIN_WHITELIST = (
-    'http://www.luffycity.cn:8080',
+    'http://luffy.bzboy.info',
 )
 CORS_ALLOW_CREDENTIALS = True  # 不允许ajax跨域请求时携带cookie
 
@@ -322,4 +323,7 @@ POLYV_CONFIG = {
     "secretkey": "8RKY40w5w5",  # 秘钥
     "tokenUrl": "https://hls.videocc.net/service/v1/token",
 }
+
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static')
+
 

@@ -1,5 +1,5 @@
 export default {
-  Host: "http://api.bzboy.info:9000",
+  Host: "http://api.bzboy.info:80",
   TC_captcha:{
     app_id: "2050295557",
   },
