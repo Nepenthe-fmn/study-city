@@ -271,14 +271,14 @@ CACHES = {
 }
 
 # 阿里云参数
-ACCESSKEY_ID = "LTAI4GAo2L2wEXX7HqgLJTNz"
-ACCESSKEY_SERECT = "Xi6k8iIEeEG0Ag8jjxLKHHBxSv0Eyz"
+ACCESSKEY_ID = "LTAI4GA******gLJTNz"
+ACCESSKEY_SERECT = "Xi6k**********0Eyz"
 REGION_ID = "cn-beijing"
-SIGN_NAME = "bzboy"  # 签名
-ROLE_ARN = "acs:ram::1609891927356009:role/ramtracer"
+SIGN_NAME = "b***y"  # 签名
+ROLE_ARN = "acs***********acer"
 SMS_TEMPLATE_ID = {
-    'login': 'SMS_198692283',  # 登录使用的模板id
-    'register': 'SMS_198672376',  # 修注册使用的模板id
+    'login': 'SMS_****283',  # 登录使用的模板id
+    'register': 'SMS_****376',  # 修注册使用的模板id
 }
 
 # 富文本编辑器ckeditor
